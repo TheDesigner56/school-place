@@ -85,3 +85,41 @@ export type SchoolAdmissions = { name: string; la: string; years: AdmissionYear[
 export async function getAdmissions(): Promise<Record<string, SchoolAdmissions>> {
   return readJson<Record<string, SchoolAdmissions>>("admissions.json");
 }
+
+export type OfstedInspection = {
+  date: string | null; publication_date: string | null; type?: string | null;
+  overall: string | null; sub?: Record<string, string | null> | null;
+};
+export type OfstedFull = {
+  report_url: string | null;
+  latest: OfstedInspection;
+  previous: { date: string | null; publication_date: string | null; overall: string | null } | null;
+  idaci_quintile: string | null;
+  report_card_2026?: { inspection_date: string | null; sub_judgements: Record<string, string> | null };
+  source_label: string; source_url: string;
+};
+
+export async function getOfstedFull(): Promise<Record<string, OfstedFull>> {
+  return readJson<Record<string, OfstedFull>>("ofsted_full.json");
+}
+
+export type Characteristics = {
+  fsm_pct: number | null; sen_pct: number | null; eal_pct: number | null;
+  girls_pct: number | null; boys_pct?: number | null; class_size_avg: number | null;
+  pupils_on_roll: number | null; ethnicity?: Record<string, number>;
+  year: number; source_label: string; source_url: string;
+};
+
+export async function getCharacteristics(): Promise<Record<string, Characteristics>> {
+  return readJson<Record<string, Characteristics>>("characteristics.json");
+}
+
+export type PerfYear = { year: number; expected_pct?: number | null; higher_pct?: number | null; attainment8?: number | null; progress8?: number | null };
+export type PerfHistory = {
+  ks2?: { years: PerfYear[] }; gcse?: { years: PerfYear[] };
+  source_label: string; source_url: string;
+};
+
+export async function getPerformanceHistory(): Promise<Record<string, PerfHistory>> {
+  return readJson<Record<string, PerfHistory>>("performance_history.json");
+}

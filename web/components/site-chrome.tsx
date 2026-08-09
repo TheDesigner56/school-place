@@ -12,10 +12,11 @@ export function Header() {
             School<span className="text-muted-foreground"> Place</span>
           </span>
         </Link>
-        <nav className="flex items-center gap-1 text-sm">
-          <Link href="/" className="rounded-md px-3 py-1.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground">Map</Link>
-          <Link href="/compare" className="rounded-md px-3 py-1.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground">Compare</Link>
-          <Link href="/methodology" className="rounded-md px-3 py-1.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground">Methodology</Link>
+        <nav className="-mr-3 flex items-center gap-0.5 overflow-x-auto text-sm sm:gap-1">
+          <Link href="/" className="whitespace-nowrap rounded-md px-2.5 py-1.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground sm:px-3">Map</Link>
+          <Link href="/league-tables" className="whitespace-nowrap rounded-md px-2.5 py-1.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground sm:px-3">Tables</Link>
+          <Link href="/compare" className="whitespace-nowrap rounded-md px-2.5 py-1.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground sm:px-3">Compare</Link>
+          <Link href="/methodology" className="whitespace-nowrap rounded-md px-2.5 py-1.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground sm:px-3">Methodology</Link>
           <ThemeToggle />
         </nav>
       </div>

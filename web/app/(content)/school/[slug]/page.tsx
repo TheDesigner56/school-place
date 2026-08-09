@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { ArrowLeft, MapPin, Users, Calendar, Building2, Layers, GraduationCap, School as SchoolIcon, BookOpen } from "lucide-react";
-import { getSchools, getSchoolBySlug, getSchoolsInDistrict, getMeta, getCrime, getPerformance, getPrices, getAdmissions } from "@/lib/data";
+import { getSchools, getSchoolBySlug, getSchoolsInDistrict, getMeta, getCrime, getPerformance, getPrices, getAdmissions, getOfstedFull, getCharacteristics, getPerformanceHistory } from "@/lib/data";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { OfstedBadge } from "@/components/ofsted-badge";
 import { ProvenanceChip, ProvenanceLine } from "@/components/provenance";
@@ -24,7 +24,10 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 }
 
 export default async function SchoolPage({ params }: { params: { slug: string } }) {
-  const [school, meta, crime, perf, prices, admissions] = await Promise.all([getSchoolBySlug(params.slug), getMeta(), getCrime(), getPerformance(), getPrices(), getAdmissions()]);
+  const [school, meta, crime, perf, prices, admissions, ofstedFull, characteristics, perfHistory] = await Promise.all([
+    getSchoolBySlug(params.slug), getMeta(), getCrime(), getPerformance(), getPrices(), getAdmissions(),
+    getOfstedFull(), getCharacteristics(), getPerformanceHistory(),
+  ]);
   if (!school) notFound();
 
   const district = postcodeDistrict(school.postcode);
@@ -52,6 +55,12 @@ export default async function SchoolPage({ params }: { params: { slug: string } 
   const distMin = distValues.length ? Math.min(...distValues) : null;
   const distMax = distValues.length ? Math.max(...distValues) : null;
   const fmtDist = (m: number) => (m >= 1000 ? `${(m / 1000).toFixed(2)} km` : `${Math.round(m)} m`);
+
+  // Full Ofsted history + census characteristics + performance trend
+  const ofsted = ofstedFull[String(school.urn)];
+  const chars = characteristics[String(school.urn)];
+  const trend = perfHistory[String(school.urn)];
+  const trendYears = trend?.ks2?.years ?? trend?.gcse?.years ?? [];
 
   // schema.org School markup
   const jsonLd = {
@@ -97,38 +106,55 @@ export default async function SchoolPage({ params }: { params: { slug: string } 
 
         {/* Grid: Ofsted + identity */}
         <div className="mt-6 grid gap-4 md:grid-cols-2">
-          {/* Ofsted section */}
+          {/* Ofsted section — full history */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Ofsted outcome</CardTitle>
-              <CardDescription>Latest inspection grade</CardDescription>
+              <CardTitle className="text-base">Ofsted</CardTitle>
+              <CardDescription>Inspection history &amp; judgements</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="flex items-center gap-3">
                 <OfstedBadge ofsted={school.ofsted} className="text-sm" />
+                {ofsted?.latest?.date && <span className="text-xs text-muted-foreground tabular-nums">{ofsted.latest.date}</span>}
               </div>
-              <dl className="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
-                <div>
-                  <dt className="text-xs text-muted-foreground">Grade</dt>
-                  <dd className="mt-0.5 tabular-nums">{school.ofsted_grade ?? "—"}</dd>
+              {ofsted?.latest?.sub && (
+                <dl className="space-y-1.5 text-sm">
+                  {Object.entries(ofsted.latest.sub).map(([k, v]) => (
+                    <div key={k} className="flex items-center justify-between gap-3">
+                      <dt className="text-muted-foreground">{k.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}</dt>
+                      <dd className="font-medium">{v}</dd>
+                    </div>
+                  ))}
+                </dl>
+              )}
+              {ofsted?.previous?.date && (
+                <p className="text-xs text-muted-foreground">
+                  Previous inspection: {ofsted.previous.overall ?? "—"} · {ofsted.previous.date}
+                </p>
+              )}
+              {ofsted?.report_card_2026?.sub_judgements && (
+                <div className="rounded-md border border-indigo-200 bg-indigo-50 p-2.5 dark:border-indigo-900 dark:bg-indigo-950/40">
+                  <p className="mb-1 text-xs font-medium text-indigo-700 dark:text-indigo-300">
+                    New report card · inspected {ofsted.report_card_2026.inspection_date}
+                  </p>
+                  <dl className="grid grid-cols-2 gap-x-3 gap-y-1 text-xs">
+                    {Object.entries(ofsted.report_card_2026.sub_judgements).slice(0, 6).map(([k, v]) => (
+                      <div key={k} className="flex justify-between gap-2">
+                        <dt className="text-muted-foreground">{k.replace(/_/g, " ")}</dt>
+                        <dd className="font-medium">{v}</dd>
+                      </div>
+                    ))}
+                  </dl>
                 </div>
-                <div>
-                  <dt className="text-xs text-muted-foreground">Inspection date</dt>
-                  <dd className="mt-0.5 tabular-nums">{formatOfstedDate(school.ofsted_date)}</dd>
-                </div>
-              </dl>
-              {school.ofsted && school.ofsted !== "Not judged" && school.ofsted !== "NULL" && (
-                <a
-                  href={`https://reports.ofsted.gov.uk/urn/${school.urn}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-xs text-primary underline-offset-2 hover:underline"
-                >
+              )}
+              {ofsted?.report_url && (
+                <a href={ofsted.report_url} target="_blank" rel="noopener noreferrer"
+                   className="inline-flex items-center gap-1 text-xs text-primary underline-offset-2 hover:underline">
                   <BookOpen className="h-3 w-3" /> Full report on Ofsted.gov.uk ↗
                 </a>
               )}
               <ProvenanceLine>
-                <ProvenanceChip>{meta.data_as_of}</ProvenanceChip>
+                <ProvenanceChip>{ofsted?.source_label ?? meta.data_as_of}</ProvenanceChip>
               </ProvenanceLine>
             </CardContent>
           </Card>
@@ -211,6 +237,21 @@ export default async function SchoolPage({ params }: { params: { slug: string } 
                   </div>
                 </dl>
               )}
+              {trendYears.length > 1 && (
+                <div className="rounded-md border border-border bg-muted/40 p-2.5">
+                  <p className="mb-1 text-xs font-medium text-muted-foreground">Trend</p>
+                  <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm tabular-nums">
+                    {trendYears.map((y) => (
+                      <span key={y.year}>
+                        <span className="text-muted-foreground">{y.year}:</span>{" "}
+                        <span className="font-semibold">
+                          {y.expected_pct != null ? `${y.expected_pct}%` : y.attainment8 != null ? y.attainment8 : "—"}
+                        </span>
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
               <ProvenanceLine>
                 <ProvenanceChip>{schoolPerf.source_label}</ProvenanceChip>
               </ProvenanceLine>
@@ -250,6 +291,63 @@ export default async function SchoolPage({ params }: { params: { slug: string } 
               </dl>
               <ProvenanceLine>
                 <ProvenanceChip>{schoolAdm?.source_label} · {schoolAdm?.la}</ProvenanceChip>
+              </ProvenanceLine>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Pupil profile (census characteristics) */}
+        {chars && (chars.fsm_pct != null || chars.ethnicity) && (
+          <Card className="mt-4">
+            <CardHeader>
+              <CardTitle className="text-base">Pupil profile</CardTitle>
+              <CardDescription>Who attends · {chars.source_label}</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <dl className="grid grid-cols-2 gap-x-4 gap-y-3 text-sm sm:grid-cols-4">
+                <div>
+                  <dt className="text-xs text-muted-foreground">Free school meals</dt>
+                  <dd className="mt-0.5 font-serif text-xl font-semibold tabular-nums">{chars.fsm_pct != null ? `${chars.fsm_pct}%` : "—"}</dd>
+                </div>
+                <div>
+                  <dt className="text-xs text-muted-foreground">English as addl. language</dt>
+                  <dd className="mt-0.5 font-serif text-xl font-semibold tabular-nums">{chars.eal_pct != null ? `${chars.eal_pct}%` : "—"}</dd>
+                </div>
+                <div>
+                  <dt className="text-xs text-muted-foreground">Avg class size</dt>
+                  <dd className="mt-0.5 font-serif text-xl font-semibold tabular-nums">{chars.class_size_avg ?? "—"}</dd>
+                </div>
+                <div>
+                  <dt className="text-xs text-muted-foreground">On roll</dt>
+                  <dd className="mt-0.5 font-serif text-xl font-semibold tabular-nums">{chars.pupils_on_roll ?? "—"}</dd>
+                </div>
+              </dl>
+              {chars.ethnicity && (() => {
+                const palette = ["bg-indigo-500", "bg-sky-400", "bg-emerald-500", "bg-amber-400", "bg-rose-400"];
+                const top = Object.entries(chars.ethnicity)
+                  .filter(([k, v]) => v > 0 && k !== "unclassified")
+                  .sort((a, b) => b[1] - a[1]).slice(0, 5);
+                const total = Object.values(chars.ethnicity).reduce((a, b) => a + b, 0);
+                return top.length > 0 ? (
+                  <div>
+                    <p className="mb-1.5 text-xs text-muted-foreground">Ethnicity (largest groups)</p>
+                    <div className="flex h-2.5 w-full overflow-hidden rounded-full">
+                      {top.map(([k, v], i) => (
+                        <div key={k} style={{ width: `${(v / Math.max(total, 1)) * 100}%` }}
+                             className={`h-full ${palette[i]}`}
+                             title={`${k.replace(/_/g, " ")}: ${v}%`} />
+                      ))}
+                    </div>
+                    <div className="mt-1.5 flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-muted-foreground">
+                      {top.map(([k, v]) => (
+                        <span key={k}>{k.replace(/_/g, " ")} <span className="tabular-nums font-medium text-foreground">{v}%</span></span>
+                      ))}
+                    </div>
+                  </div>
+                ) : null;
+              })()}
+              <ProvenanceLine>
+                <ProvenanceChip>{chars.source_label}</ProvenanceChip>
               </ProvenanceLine>
             </CardContent>
           </Card>
