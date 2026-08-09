@@ -21,7 +21,7 @@ function CompareInner() {
   const [pickQuery, setPickQuery] = useState("");
 
   useEffect(() => {
-    fetch("/data/schools.json")
+    fetch(`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/data/schools.json`)
       .then((r) => r.json())
       .then((d: School[]) => {
         setSchools(d);
