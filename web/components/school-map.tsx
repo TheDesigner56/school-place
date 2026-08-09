@@ -23,7 +23,7 @@ const OFSTED_CASE_MATCH = [
   ["NULL", "hsl(220,8%,55%)"],
 ] as const;
 
-export function SchoolMap({ schools }: { schools: School[] }) {
+export function SchoolMap({ schools, reach = {} }: { schools: School[]; reach?: Record<number, { min: number; max: number }> }) {
   const mapContainer = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
   const [query, setQuery] = useState("");
@@ -32,6 +32,7 @@ export function SchoolMap({ schools }: { schools: School[] }) {
   const [showFilters, setShowFilters] = useState(false);
   const [searchResults, setSearchResults] = useState<School[]>([]);
   const [showResults, setShowResults] = useState(false);
+  const [showReach, setShowReach] = useState(false);
 
   const fuse = useMemo(
     () =>
@@ -62,6 +63,35 @@ export function SchoolMap({ schools }: { schools: School[] }) {
     mapRef.current = map;
     map.on("load", () => {
       map.addSource("schools", { type: "geojson", data: { type: "FeatureCollection", features: [] } });
+      // Confidence-gradient: reach washes UNDER the pins.
+      // Three concentric bands — core (historically inside), mid, outer edge (volatile).
+      map.addSource("reach", { type: "geojson", data: { type: "FeatureCollection", features: [] } });
+      const bands: Array<[string, number]> = [
+        ["reach-core", 0.14],
+        ["reach-mid", 0.08],
+        ["reach-outer", 0.04],
+      ];
+      for (const [id, opacity] of bands) {
+        map.addLayer({
+          id,
+          type: "fill",
+          source: "reach",
+          filter: ["==", ["get", "band"], id],
+          paint: {
+            "fill-color": "hsl(245, 70%, 55%)",
+            "fill-opacity": opacity,
+          },
+          layout: { visibility: "none" },
+        });
+      }
+      map.addLayer({
+        id: "reach-edge",
+        type: "line",
+        source: "reach",
+        filter: ["==", ["get", "band"], "reach-outer"],
+        paint: { "line-color": "hsl(245, 70%, 55%)", "line-opacity": 0.35, "line-width": 1.5, "line-dasharray": [2, 2] },
+        layout: { visibility: "none" },
+      });
       // Circle layer — colour by Ofsted grade via case expression
       // Using explicit nested "case" for cleaner TS typing than match with spread.
       map.addLayer({
@@ -158,6 +188,44 @@ export function SchoolMap({ schools }: { schools: School[] }) {
   useEffect(() => {
     updateSource();
   }, [updateSource]);
+
+  // Approximate a circle polygon around [lng,lat] with radius r metres.
+  const circlePoly = (lng: number, lat: number, r: number, steps = 64) => {
+    const coords: Array<[number, number]> = [];
+    const dLat = r / 111320;
+    const dLng = r / (111320 * Math.cos((lat * Math.PI) / 180));
+    for (let i = 0; i <= steps; i++) {
+      const a = (i / steps) * 2 * Math.PI;
+      coords.push([lng + dLng * Math.cos(a), lat + dLat * Math.sin(a)]);
+    }
+    return [coords];
+  };
+
+  // Toggle the confidence-gradient reach washes.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !map.getSource("reach")) return;
+    const vis = showReach ? "visible" : "none";
+    for (const id of ["reach-core", "reach-mid", "reach-outer", "reach-edge"]) {
+      if (map.getLayer(id)) map.setLayoutProperty(id, "visibility", vis);
+    }
+    if (showReach) {
+      const features: GeoJSON.Feature[] = [];
+      for (const s of schools) {
+        const r = reach[s.urn];
+        if (!r || !s.lat || !s.lng) continue;
+        const { min, max } = r;
+        const mid = (min + max) / 2;
+        features.push(
+          { type: "Feature", geometry: { type: "Polygon", coordinates: circlePoly(s.lng, s.lat, max) }, properties: { band: "reach-outer" } },
+          { type: "Feature", geometry: { type: "Polygon", coordinates: circlePoly(s.lng, s.lat, mid) }, properties: { band: "reach-mid" } },
+          { type: "Feature", geometry: { type: "Polygon", coordinates: circlePoly(s.lng, s.lat, min) }, properties: { band: "reach-core" } },
+        );
+      }
+      (map.getSource("reach") as maplibregl.GeoJSONSource).setData({ type: "FeatureCollection", features });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showReach, schools, reach]);
 
   // Search box input handler
   const onSearch = useCallback(
@@ -292,6 +360,19 @@ export function SchoolMap({ schools }: { schools: School[] }) {
                   Clear
                 </button>
               )}
+              <span className="mx-1 h-4 w-px bg-border" aria-hidden />
+              <button
+                onClick={() => setShowReach((v) => !v)}
+                className={cn(
+                  "rounded-full border px-2.5 py-1 text-xs font-medium transition-colors",
+                  showReach
+                    ? "border-indigo-500 bg-indigo-500 text-white"
+                    : "border-indigo-300 text-indigo-600 hover:bg-indigo-50 dark:border-indigo-800 dark:text-indigo-400 dark:hover:bg-indigo-950"
+                )}
+                title="Show published last-distance-offered as confidence washes (B&NES schools)"
+              >
+                Reach
+              </button>
             </div>
           )}
         </div>
