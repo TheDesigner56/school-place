@@ -1,0 +1,108 @@
+{ "head": {
+    "vars": [ "s" , "p" , "o" ]
+  } ,
+  "results": {
+    "bindings": [
+      { 
+        "s": { "type": "uri" , "value": "http://landregistry.data.gov.uk/data/ppi/transaction/702EF0D1-AB60-4A1B-A2A1-C127E1EDE547/current" } ,
+        "p": { "type": "uri" , "value": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" } ,
+        "o": { "type": "uri" , "value": "http://landregistry.data.gov.uk/def/common/BS7666Address" }
+      } ,
+      { 
+        "s": { "type": "uri" , "value": "http://landregistry.data.gov.uk/data/ppi/transaction/702EF0D1-AB60-4A1B-A2A1-C127E1EDE547/current" } ,
+        "p": { "type": "uri" , "value": "http://landregistry.data.gov.uk/def/common/district" } ,
+        "o": { "type": "literal" , "value": "WARRINGTON" }
+      } ,
+      { 
+        "s": { "type": "uri" , "value": "http://landregistry.data.gov.uk/data/ppi/transaction/702EF0D1-AB60-4A1B-A2A1-C127E1EDE547/current" } ,
+        "p": { "type": "uri" , "value": "http://landregistry.data.gov.uk/def/common/county" } ,
+        "o": { "type": "literal" , "value": "WARRINGTON" }
+      } ,
+      { 
+        "s": { "type": "uri" , "value": "http://landregistry.data.gov.uk/data/ppi/transaction/702EF0D1-AB60-4A1B-A2A1-C127E1EDE547/current" } ,
+        "p": { "type": "uri" , "value": "http://landregistry.data.gov.uk/def/common/paon" } ,
+        "o": { "type": "literal" , "value": "ROSEMOUNT COTTAGE" }
+      } ,
+      { 
+        "s": { "type": "uri" , "value": "http://landregistry.data.gov.uk/data/ppi/transaction/702EF0D1-AB60-4A1B-A2A1-C127E1EDE547/current" } ,
+        "p": { "type": "uri" , "value": "http://landregistry.data.gov.uk/def/common/locality" } ,
+        "o": { "type": "literal" , "value": "WINWICK" }
+      } ,
+      { 
+        "s": { "type": "uri" , "value": "http://landregistry.data.gov.uk/data/ppi/transaction/702EF0D1-AB60-4A1B-A2A1-C127E1EDE547/current" } ,
+        "p": { "type": "uri" , "value": "http://landregistry.data.gov.uk/def/common/postcode" } ,
+        "o": { "type": "literal" , "value": "WA2 8SN" }
+      } ,
+      { 
+        "s": { "type": "uri" , "value": "http://landregistry.data.gov.uk/data/ppi/transaction/702EF0D1-AB60-4A1B-A2A1-C127E1EDE547/current" } ,
+        "p": { "type": "uri" , "value": "http://landregistry.data.gov.uk/def/common/town" } ,
+        "o": { "type": "literal" , "value": "WARRINGTON" }
+      } ,
+      { 
+        "s": { "type": "uri" , "value": "http://landregistry.data.gov.uk/data/ppi/transaction/702EF0D1-AB60-4A1B-A2A1-C127E1EDE547/current" } ,
+        "p": { "type": "uri" , "value": "http://landregistry.data.gov.uk/def/common/saon" } ,
+        "o": { "type": "literal" , "value": "3" }
+      } ,
+      { 
+        "s": { "type": "uri" , "value": "http://landregistry.data.gov.uk/data/ppi/transaction/702EF0D1-AB60-4A1B-A2A1-C127E1EDE547/current" } ,
+        "p": { "type": "uri" , "value": "http://landregistry.data.gov.uk/def/common/street" } ,
+        "o": { "type": "literal" , "value": "GOLBORNE ROAD" }
+      } ,
+      { 
+        "s": { "type": "uri" , "value": "http://landregistry.data.gov.uk/data/ppi/transaction/DD1C6220-9A14-40F8-9728-AE6778093952/current" } ,
+        "p": { "type": "uri" , "value": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" } ,
+        "o": { "type": "uri" , "value": "http://landregistry.data.gov.uk/def/common/BS7666Address" }
+      } ,
+      { 
+        "s": { "type": "uri" , "value": "http://landregistry.data.gov.uk/data/ppi/transaction/DD1C6220-9A14-40F8-9728-AE6778093952/current" } ,
+        "p": { "type": "uri" , "value": "http://landregistry.data.gov.uk/def/common/district" } ,
+        "o": { "type": "literal" , "value": "NORWICH" }
+      } ,
+      { 
+        "s": { "type": "uri" , "value": "http://landregistry.data.gov.uk/data/ppi/transaction/DD1C6220-9A14-40F8-9728-AE6778093952/current" } ,
+        "p": { "type": "uri" , "value": "http://landregistry.data.gov.uk/def/common/county" } ,
+        "o": { "type": "literal" , "value": "NORFOLK" }
+      } ,
+      { 
+        "s": { "type": "uri" , "value": "http://landregistry.data.gov.uk/data/ppi/transaction/DD1C6220-9A14-40F8-9728-AE6778093952/current" } ,
+        "p": { "type": "uri" , "value": "http://landregistry.data.gov.uk/def/common/paon" } ,
+        "o": { "type": "literal" , "value": "ANCHOR HOUSE" }
+      } ,
+      { 
+        "s": { "type": "uri" , "value": "http://landregistry.data.gov.uk/data/ppi/transaction/DD1C6220-9A14-40F8-9728-AE6778093952/current" } ,
+        "p": { "type": "uri" , "value": "http://landregistry.data.gov.uk/def/common/locality" } ,
+        "o": { "type": "literal" , "value": "NORWICH" }
+      } ,
+      { 
+        "s": { "type": "uri" , "value": "http://landregistry.data.gov.uk/data/ppi/transaction/DD1C6220-9A14-40F8-9728-AE6778093952/current" } ,
+        "p": { "type": "uri" , "value": "http://landregistry.data.gov.uk/def/common/postcode" } ,
+        "o": { "type": "literal" , "value": "NR3 3XP" }
+      } ,
+      { 
+        "s": { "type": "uri" , "value": "http://landregistry.data.gov.uk/data/ppi/transaction/DD1C6220-9A14-40F8-9728-AE6778093952/current" } ,
+        "p": { "type": "uri" , "value": "http://landregistry.data.gov.uk/def/common/town" } ,
+        "o": { "type": "literal" , "value": "NORWICH" }
+      } ,
+      { 
+        "s": { "type": "uri" , "value": "http://landregistry.data.gov.uk/data/ppi/transaction/DD1C6220-9A14-40F8-9728-AE6778093952/current" } ,
+        "p": { "type": "uri" , "value": "http://landregistry.data.gov.uk/def/common/saon" } ,
+        "o": { "type": "literal" , "value": "14" }
+      } ,
+      { 
+        "s": { "type": "uri" , "value": "http://landregistry.data.gov.uk/data/ppi/transaction/DD1C6220-9A14-40F8-9728-AE6778093952/current" } ,
+        "p": { "type": "uri" , "value": "http://landregistry.data.gov.uk/def/common/street" } ,
+        "o": { "type": "literal" , "value": "ANCHOR QUAY" }
+      } ,
+      { 
+        "s": { "type": "uri" , "value": "http://landregistry.data.gov.uk/data/ppi/transaction/AD6F4B2F-CAFF-4B46-B359-D663C2AC90C9/current" } ,
+        "p": { "type": "uri" , "value": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" } ,
+        "o": { "type": "uri" , "value": "http://landregistry.data.gov.uk/def/common/BS7666Address" }
+      } ,
+      { 
+        "s": { "type": "uri" , "value": "http://landregistry.data.gov.uk/data/ppi/transaction/AD6F4B2F-CAFF-4B46-B359-D663C2AC90C9/current" } ,
+        "p": { "type": "uri" , "value": "http://landregistry.data.gov.uk/def/common/district" } ,
+        "o": { "type": "literal" , "value": "THREE RIVERS" }
+      }
+    ]
+  }
+}

@@ -1,0 +1,2 @@
+{ "format" : "linked-data-api", "version" : "0.2", "result" : {"_about" : "http://landregistry.data.gov.uk/data/ukhpi/index.json", "definition" : "http://landregistry.data.gov.uk/meta/_p0/_p1/_p2.json", "extendedMetadataVersion" : "http://landregistry.data.gov.uk/data/ukhpi/index.json?_metadata=all", "primaryTopic" : "http://landregistry.data.gov.uk/data/ukhpi/index", "type" : ["http://purl.org/linked-data/api/vocab#ItemEndpoint", "http://purl.org/linked-data/api/vocab#Page"]}
+}

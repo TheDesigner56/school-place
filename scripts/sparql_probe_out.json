@@ -1,0 +1,9 @@
+{ "head": {
+    "vars": [ "addr" , "amount" , "date" , "ptype" ]
+  } ,
+  "results": {
+    "bindings": [
+      
+    ]
+  }
+}

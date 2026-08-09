@@ -1,0 +1,9 @@
+PREFIX lrppi: <http://landregistry.data.gov.uk/def/ppi/>
+SELECT ?s ?p ?o
+WHERE {
+  ?s a lrppi:TransactionRecord .
+  ?s lrppi:pricePaid ?amount .
+  ?s lrppi:propertyAddress ?addr .
+  ?addr ?p ?o .
+}
+LIMIT 20

@@ -1,0 +1,23 @@
+{ "head": {
+    "vars": [ "s" , "p" , "o" ]
+  } ,
+  "results": {
+    "bindings": [
+      { 
+        "s": { "type": "uri" , "value": "http://landregistry.data.gov.uk/data/ppi/transaction/702EF0D1-AB60-4A1B-A2A1-C127E1EDE547/current" } ,
+        "p": { "type": "uri" , "value": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" } ,
+        "o": { "type": "uri" , "value": "http://landregistry.data.gov.uk/def/ppi/TransactionRecord" }
+      } ,
+      { 
+        "s": { "type": "uri" , "value": "http://landregistry.data.gov.uk/data/ppi/transaction/702EF0D1-AB60-4A1B-A2A1-C127E1EDE547/current" } ,
+        "p": { "type": "uri" , "value": "http://landregistry.data.gov.uk/def/ppi/transactionId" } ,
+        "o": { "type": "literal" , "datatype": "http://landregistry.data.gov.uk/def/ppi/TransactionIdDatatype" , "value": "702EF0D1-AB60-4A1B-A2A1-C127E1EDE547" }
+      } ,
+      { 
+        "s": { "type": "uri" , "value": "http://landregistry.data.gov.uk/data/ppi/transaction/702EF0D1-AB60-4A1B-A2A1-C127E1EDE547/current" } ,
+        "p": { "type": "uri" , "value": "http://landregistry.data.gov.uk/def/ppi/pricePaid" } ,
+        "o": { "type": "literal" , "datatype": "http://www.w3.org/2001/XMLSchema#integer" , "value": "35000" }
+      }
+    ]
+  }
+}

@@ -1,0 +1,149 @@
+<!DOCTYPE html><html lang="en">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+      <title>Land Registry Linked Data: Search Results</title>
+      <link rel="shortcut icon" href="/lda-assets/images/datagovuk_favicon.png" type="image/x-icon">
+      <link rel="alternate" href="http://landregistry.data.gov.uk/data/ukhpi/region.csv?http%3A%2F%2Flandregistry.data.gov.uk%2Fid%2Fregion%2Fbristol=" type="text/csv">
+      <link rel="alternate" href="http://landregistry.data.gov.uk/data/ukhpi/region.json?http%3A%2F%2Flandregistry.data.gov.uk%2Fid%2Fregion%2Fbristol=" type="application/json">
+      <link rel="alternate" href="http://landregistry.data.gov.uk/data/ukhpi/region.rdf?http%3A%2F%2Flandregistry.data.gov.uk%2Fid%2Fregion%2Fbristol=" type="application/rdf+xml">
+      <link rel="alternate" href="http://landregistry.data.gov.uk/data/ukhpi/region.text?http%3A%2F%2Flandregistry.data.gov.uk%2Fid%2Fregion%2Fbristol=" type="text/plain">
+      <link rel="alternate" href="http://landregistry.data.gov.uk/data/ukhpi/region.ttl?http%3A%2F%2Flandregistry.data.gov.uk%2Fid%2Fregion%2Fbristol=" type="text/turtle">
+      <link rel="alternate" href="http://landregistry.data.gov.uk/data/ukhpi/region.xml?http%3A%2F%2Flandregistry.data.gov.uk%2Fid%2Fregion%2Fbristol=" type="application/xml">
+      <!--[if lt IE 9]><script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]--><script type="text/javascript" src="/lda-assets/scripts/jquery.min.js"></script><script type="text/javascript" src="/lda-assets/scripts/jquery-ui.min.js"></script><script type="text/javascript" src="/lda-assets/scripts/jquery.sparkline.js"></script><script type="text/javascript">
+		$(function() {
+			$('.info img')
+				.toggle(function () {
+					$(this)
+						.attr('src', '/lda-assets/images/svg/x.svg').attr('class', 'open icon help')
+						.next().show();
+				}, function () {
+					$(this)
+						.attr('src', '/lda-assets/images/svg/question.svg').attr('class', 'open icon help')
+						.next().fadeOut('slow');
+				});
+
+			$('input[type=date]').datepicker({
+				changeMonth: true,
+				changeYear: true,
+				dateFormat: 'yy-mm-dd',
+				autoSize: true
+			});
+
+			$('#search').hide();
+
+			$('#openSearch')
+				.toggle(function () {
+					$(this).text('Hide Search Form');
+					$('#search').slideDown('slow');
+				}, function () {
+					$(this).text('Show Search Form');
+					$('#search').slideUp('slow');
+				});
+
+			$('.provenance textarea')
+				.each(function () {
+					var skipLines = parseFloat($(this).attr('data-skip-lines'), 10);
+					var lineHeight = parseFloat($(this).css('line-height'), 10);
+					$(this).scrollTop(skipLines * lineHeight);
+					var cm = CodeMirror.fromTextArea(this, {
+						basefiles: ["/lda-assets/scripts/codemirror/codemirror_base_sparql.js"],
+						stylesheet: "/lda-assets/css/sparql.css",
+						textWrapping: false
+					});
+					$(cm.frame).load(function () {
+						cm.jumpToLine(skipLines + 1);
+						$(cm.frame)
+							.css('border', 	'1px solid #D3D3D3')
+							.css('border-radius', '5px')
+							.css('-moz-border-radius', '5px');
+					});
+				});
+
+			
+		});
+	</script><link rel="stylesheet" href="/lda-assets/css/html5reset-1.6.1.css" type="text/css">
+      <link rel="stylesheet" href="/lda-assets/css/jquery-ui.css" type="text/css">
+      <link rel="stylesheet" href="/lda-assets/css/smoothness/jquery-ui.css" type="text/css">
+      <link rel="stylesheet" href="/lda-assets/css/result.css" type="text/css">
+      <!--[if lt IE 9]><link rel="stylesheet" href="/lda-assets/css/ie.css" type="text/css"></link><![endif]--><script type="text/javascript" src="/lda-assets/scripts/staging.js"></script></head>
+   <body>
+      <div id="page">
+         <nav class="site">
+            <div style="float:right; margin-bottom: 30px;">
+               <section class="skipLinks">
+                  <ul>
+                     <li><a href="#result" tabIndex="1">Result</a></li>
+                     <li><a href="#view">View</a></li>
+                     <li class="last"><a href="#sparql">SPARQL Query</a></li>
+                  </ul>
+               </section>
+               <section class="formats">
+                  <ul>
+                     <li class="first"><a href="http://landregistry.data.gov.uk/data/ukhpi/region.csv?http%3A%2F%2Flandregistry.data.gov.uk%2Fid%2Fregion%2Fbristol=" type="text/csv" rel="alternate" title="view in csv format">csv</a></li>
+                     <li><a href="http://landregistry.data.gov.uk/data/ukhpi/region.html?http%3A%2F%2Flandregistry.data.gov.uk%2Fid%2Fregion%2Fbristol=" type="text/html" rel="alternate" title="view in html format">html</a></li>
+                     <li><a href="http://landregistry.data.gov.uk/data/ukhpi/region.json?http%3A%2F%2Flandregistry.data.gov.uk%2Fid%2Fregion%2Fbristol=" type="application/json" rel="alternate" title="view in json format">json</a></li>
+                     <li><a href="http://landregistry.data.gov.uk/data/ukhpi/region.rdf?http%3A%2F%2Flandregistry.data.gov.uk%2Fid%2Fregion%2Fbristol=" type="application/rdf+xml" rel="alternate" title="view in rdf format">rdf</a></li>
+                     <li><a href="http://landregistry.data.gov.uk/data/ukhpi/region.text?http%3A%2F%2Flandregistry.data.gov.uk%2Fid%2Fregion%2Fbristol=" type="text/plain" rel="alternate" title="view in text format">text</a></li>
+                     <li><a href="http://landregistry.data.gov.uk/data/ukhpi/region.ttl?http%3A%2F%2Flandregistry.data.gov.uk%2Fid%2Fregion%2Fbristol=" type="text/turtle" rel="alternate" title="view in ttl format">ttl</a></li>
+                     <li class="last"><a href="http://landregistry.data.gov.uk/data/ukhpi/region.xml?http%3A%2F%2Flandregistry.data.gov.uk%2Fid%2Fregion%2Fbristol=" type="application/xml" rel="alternate" title="view in xml format">xml</a></li>
+                  </ul>
+               </section>
+            </div>
+         </nav>
+         <header>
+            <h1><a href="/">Linked Data API</a></h1>
+         </header>
+         <div id="result">
+            <div class="panel">
+               <header>
+                  <p id="openSearch">Show Search Form</p>
+                  <h1>region</h1>
+                  <p class="id"><a href="http://landregistry.data.gov.uk/data/ukhpi/region">http://landregistry.data.gov.uk/data/ukhpi/region</a></p>
+               </header>
+               <section id="search" style="display: none">
+                  <form action="http://landregistry.data.gov.uk/data/ukhpi">
+                     <table>
+                        <colgroup>
+                           <col class="labelWidth">
+                           <col class="valueWidth">
+                        </colgroup>
+                        <tr>
+                           <td></td>
+                           <td></td>
+                        </tr>
+                     </table>
+                     <p><button type="submit">Search</button></p>
+                  </form>
+               </section>
+               <section>
+                  <table id="w273331609aab7"></table>
+               </section>
+            </div>
+         </div>
+         <nav class="topnav"><script type="text/javascript">
+				function initMap() {
+					return null;
+				};
+			</script></nav>
+         <nav class="bottomnav"></nav>
+         <footer>
+            <div class="provenance">
+               <div class=" query col1">
+                  <h2>Viewer</h2>
+                  <p>This is the SPARQL query that was generated to pull together the data that is provided about the selected item. You can modify it here and re-run the query but you may find more options at the
+                     <a href="https://landregistry.data.gov.uk/landregistry/sparql/sparql.html">endpoint's page</a>.
+                  </p>
+                  <form action="https://landregistry.data.gov.uk/landregistry/sparql" method="post"><textarea id="sparql" name="query" wrap="soft" data-skip-lines="0">DESCRIBE 
+  &lt;http://landregistry.data.gov.uk/data/ukhpi/region&gt;</textarea><p><button type="submit">Run Query</button></p>
+                  </form>
+               </div>
+            </div>
+            <p>Powered by <a href="https://github.com/epimorphics/elda">Elda 3.0.3</a>, an implementation of the <a href="http://code.google.com/p/linked-data-api">Linked Data API</a><br><a href="http://www.axialis.com/free/icons">Icons</a> by <a href="http://www.axialis.com">Axialis Team</a></p>
+         </footer>
+      </div><script async src="https://www.googletagmanager.com/gtag/js?id=G-SMWBQ0LF6D"></script><script type="text/javascript">
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){ dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'G-SMWBQ0LF6D', { anonymize_ip: true });
+</script></body>
+</html>

@@ -1,0 +1,2 @@
+{ "format" : "linked-data-api", "version" : "0.2", "result" : {"_about" : "http://landregistry.data.gov.uk/data/ppi/postcode/BS7%200DL.json?_view=basic", "definition" : "http://landregistry.data.gov.uk/data/ppi/postcode/BS7%200DL.json?_view=basic", "extendedMetadataVersion" : "http://landregistry.data.gov.uk/data/ppi/postcode/BS7%200DL.json?_view=basic&_metadata=all", "primaryTopic" : "http://landregistry.data.gov.uk/data/ppi/postcode/BS7%200DL", "type" : ["http://purl.org/linked-data/api/vocab#ItemEndpoint", "http://purl.org/linked-data/api/vocab#Page"]}
+}

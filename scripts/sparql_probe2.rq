@@ -1,0 +1,17 @@
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX lrcommon: <http://landregistry.data.gov.uk/def/common/>
+PREFIX lrppi: <http://landregistry.data.gov.uk/def/ppi/>
+
+SELECT ?amount ?date ?ptype ?postcode
+WHERE {
+  ?transaction lrppi:pricePaid ?amount ;
+               lrppi:transactionDate ?date ;
+               lrppi:propertyAddress ?addr .
+  ?addr lrcommon:postcode ?postcode ;
+        lrcommon:propertyType ?ptype .
+  FILTER (regex(?postcode, "^BS7 ", "i"))
+}
+LIMIT 10

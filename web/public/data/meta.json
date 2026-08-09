@@ -1,0 +1,18 @@
+{
+  "region": "Bath & North East Somerset + Bristol",
+  "schools": 236,
+  "by_la": {
+    "Bath and North East Somerset": 81,
+    "Bristol": 155
+  },
+  "by_grade": {
+    "Good": 164,
+    "Inadequate": 6,
+    "NULL": 3,
+    "Not judged": 34,
+    "Outstanding": 15,
+    "Requires Improvement": 14
+  },
+  "data_as_of": "Ofsted outcomes as at 31 August 2025",
+  "source": "Ofsted official statistics via gov.uk (OGL); geocoded via postcodes.io (OS OGL)"
+}
