@@ -33,7 +33,7 @@ export function Footer() {
             <p className="font-medium text-foreground">School Place</p>
             <p className="mt-1 max-w-md text-xs leading-relaxed">
               Honest UK schools &amp; catchment intelligence. Free, open, and sourced.
-              Pilot region: Bath &amp; North East Somerset + Bristol.
+              All 21,990 schools across England.
             </p>
           </div>
           <div className="flex flex-col gap-1 text-xs md:text-right">

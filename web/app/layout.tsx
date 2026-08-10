@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     template: "%s · School Place",
   },
   description:
-    "Free, honest UK schools & catchment intelligence. Ofsted grades, location, and identity for 236 schools across Bath & North East Somerset and Bristol.",
+    "Free, honest UK schools & catchment intelligence. Ofsted grades, location, and identity for 21,990 schools across England.",
   metadataBase: new URL("https://schoolplace.example"),
 };
 

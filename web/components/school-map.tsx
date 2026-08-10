@@ -10,7 +10,7 @@ import { ofstedHsl, ofstedLabel, PHASES, cn } from "@/lib/utils";
 
 /**
  * Map-first home. MapLibre GL with OpenFreeMap tiles (no API key).
- * All 236 schools as colour-coded circle pins. Search (Fuse.js), phase filters.
+ * All 21,990 schools as colour-coded circle pins. Search (Fuse.js), phase filters.
  * The map IS the home screen; search + filters float as glass panels over it.
  */
 
@@ -275,7 +275,7 @@ export function SchoolMap({ schools, reach = {} }: { schools: School[]; reach?: 
                 onChange={(e) => onSearch(e.target.value)}
                 onFocus={() => query.trim().length >= 2 && setShowResults(true)}
                 onBlur={() => setTimeout(() => setShowResults(false), 150)}
-                placeholder="Search 236 schools by name or postcode"
+                placeholder="Search 21,990 schools by name or postcode"
                 className="h-11 w-full bg-transparent px-2 text-sm outline-none placeholder:text-muted-foreground"
                 aria-label="Search schools"
               />

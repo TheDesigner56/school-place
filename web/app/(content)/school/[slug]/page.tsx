@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { ArrowLeft, MapPin, Users, Calendar, Building2, Layers, GraduationCap, School as SchoolIcon, BookOpen } from "lucide-react";
-import { getSchools, getSchoolBySlug, getSchoolsInDistrict, getMeta, getCrime, getPerformance, getPrices, getAdmissions, getOfstedFull, getCharacteristics, getPerformanceHistory } from "@/lib/data";
+import { getSchools, getSchoolData, getDistricts } from "@/lib/data";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { OfstedBadge } from "@/components/ofsted-badge";
 import { ProvenanceChip, ProvenanceLine } from "@/components/provenance";
@@ -15,7 +15,8 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  const school = await getSchoolBySlug(params.slug);
+  const data = await getSchoolData(params.slug);
+  const school = data?.school;
   if (!school) return { title: "School not found" };
   return {
     title: `${school.name}`,
@@ -24,32 +25,32 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 }
 
 export default async function SchoolPage({ params }: { params: { slug: string } }) {
-  const [school, meta, crime, perf, prices, admissions, ofstedFull, characteristics, perfHistory] = await Promise.all([
-    getSchoolBySlug(params.slug), getMeta(), getCrime(), getPerformance(), getPrices(), getAdmissions(),
-    getOfstedFull(), getCharacteristics(), getPerformanceHistory(),
-  ]);
-  if (!school) notFound();
+  const [data, districts] = await Promise.all([getSchoolData(params.slug), getDistricts()]);
+  if (!data) notFound();
+  const { school, ofsted, perf, perf_history: trend, chars, admissions: schoolAdm, crime, prices, flood, data_as_of } = data;
 
   const district = postcodeDistrict(school.postcode);
-  const nearby = (await getSchoolsInDistrict(district))
-    .filter((s) => s.urn !== school.urn)
-    .slice(0, 6);
+  const nearby = (await Promise.all(
+    (districts[district] ?? [])
+      .filter((slug) => slug !== school.slug)
+      .slice(0, 6)
+      .map((slug) => getSchoolData(slug))
+  )).filter((d): d is NonNullable<typeof d> => Boolean(d)).map((d) => d.school);
 
   // Neighbourhood crime: this school's LSOA, May 2026 snapshot
-  const lsoaCrime = school.lsoa ? crime[school.lsoa] : undefined;
+  const lsoaCrime = crime;
   const topCategories = lsoaCrime
     ? Object.entries(lsoaCrime.by_category).sort((a, b) => b[1] - a[1]).slice(0, 5)
     : [];
   const fmtCategory = (c: string) => c.replace(/-/g, " ").replace(/\b\w/g, (ch) => ch.toUpperCase());
 
   // Exam performance (KS2 for primary, GCSE for secondary)
-  const schoolPerf = perf[String(school.urn)];
+  const schoolPerf = perf;
 
   // Local sold prices (postcode district)
-  const districtPrices = prices[district.toUpperCase()];
+  const districtPrices = prices;
 
   // Admissions: last-distance-offered history (the honest-probability engine seed)
-  const schoolAdm = admissions[String(school.urn)];
   const admYears = schoolAdm?.years?.slice().sort((a, b) => b.year - a.year) ?? [];
   const distValues = admYears.map((y) => y.last_distance_m).filter((d): d is number => d != null);
   const distMin = distValues.length ? Math.min(...distValues) : null;
@@ -57,9 +58,6 @@ export default async function SchoolPage({ params }: { params: { slug: string } 
   const fmtDist = (m: number) => (m >= 1000 ? `${(m / 1000).toFixed(2)} km` : `${Math.round(m)} m`);
 
   // Full Ofsted history + census characteristics + performance trend
-  const ofsted = ofstedFull[String(school.urn)];
-  const chars = characteristics[String(school.urn)];
-  const trend = perfHistory[String(school.urn)];
   const trendYears = trend?.ks2?.years ?? trend?.gcse?.years ?? [];
 
   // schema.org School markup
@@ -154,7 +152,7 @@ export default async function SchoolPage({ params }: { params: { slug: string } 
                 </a>
               )}
               <ProvenanceLine>
-                <ProvenanceChip>{ofsted?.source_label ?? meta.data_as_of}</ProvenanceChip>
+                <ProvenanceChip>{ofsted?.source_label ?? data_as_of ?? "Ofsted"}</ProvenanceChip>
               </ProvenanceLine>
             </CardContent>
           </Card>
@@ -370,6 +368,46 @@ export default async function SchoolPage({ params }: { params: { slug: string } 
             <ProvenanceLine><ProvenanceChip>Geocoded via postcodes.io · OS OGL</ProvenanceChip></ProvenanceLine>
           </CardContent>
         </Card>
+
+        {/* Flood risk */}
+        {flood && (
+          <Card className="mt-4">
+            <CardHeader>
+              <CardTitle className="text-base">Flood risk</CardTitle>
+              <CardDescription>Environment Agency Flood Map for Planning</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {flood.flood_zone3 ? (
+                <div className="flex items-center gap-3 rounded-md border border-rose-200 bg-rose-50 p-3 dark:border-rose-900 dark:bg-rose-950/40">
+                  <span className="text-2xl">⚠️</span>
+                  <div>
+                    <p className="text-sm font-semibold text-rose-700 dark:text-rose-300">In Flood Zone 3 — high risk</p>
+                    <p className="text-xs text-muted-foreground">Land assessed as having a 1-in-100 (river) or 1-in-200 (sea) annual chance of flooding.</p>
+                  </div>
+                </div>
+              ) : flood.flood_zone2 ? (
+                <div className="flex items-center gap-3 rounded-md border border-amber-200 bg-amber-50 p-3 dark:border-amber-900 dark:bg-amber-950/40">
+                  <span className="text-2xl">⚠️</span>
+                  <div>
+                    <p className="text-sm font-semibold text-amber-700 dark:text-amber-300">In Flood Zone 2 — medium risk</p>
+                    <p className="text-xs text-muted-foreground">Land assessed as having between a 1-in-100 and 1-in-1,000 annual chance of flooding.</p>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-center gap-3 rounded-md border border-emerald-200 bg-emerald-50 p-3 dark:border-emerald-900 dark:bg-emerald-950/40">
+                  <span className="text-2xl">✅</span>
+                  <div>
+                    <p className="text-sm font-semibold text-emerald-700 dark:text-emerald-300">Outside Flood Zones 2 &amp; 3</p>
+                    <p className="text-xs text-muted-foreground">Not in the Environment Agency's assessed flood zones. Local surface-water risk may still apply.</p>
+                  </div>
+                </div>
+              )}
+              <ProvenanceLine>
+                <ProvenanceChip>{flood.source_label ?? "EA Flood Map for Planning"}</ProvenanceChip>
+              </ProvenanceLine>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Neighbourhood safety */}
         <Card className="mt-4">

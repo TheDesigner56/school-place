@@ -94,7 +94,7 @@ export default async function MethodologyPage() {
           "Show a number without its source and date.",
           "Colour a school red without text carrying the same meaning (colour is never the only signal).",
           "Charge for access to public information.",
-          "Hide the limits of the pilot region — this is Bath & North East Somerset + Bristol only, today.",
+          "Pretend coverage is complete where it is not — admissions, crime, and sold-price layers currently cover the original pilot region only.",
         ].map((item) => (
           <li key={item} className="flex items-start gap-2">
             <Heart className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
@@ -103,11 +103,11 @@ export default async function MethodologyPage() {
         ))}
       </ul>
 
-      {/* Pilot scope */}
-      <h2 className="mt-10 mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Pilot scope</h2>
+      {/* National scope */}
+      <h2 className="mt-10 mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">National scope</h2>
       <p className="text-sm leading-relaxed text-muted-foreground">
-        This is a regional pilot covering <span className="font-medium text-foreground">{meta.region}</span> —
-        {" "}<span className="tabular-nums">{meta.schools}</span> schools. Ofsted grade distribution:
+        School Place now covers <span className="font-medium text-foreground">{meta.region}</span> —
+        {" "}<span className="tabular-nums">{meta.schools.toLocaleString()}</span> schools. Ofsted grade distribution:
       </p>
       <ul className="mt-3 space-y-1 text-sm">
         {Object.entries(meta.by_grade)

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { ArrowLeft, MapPin } from "lucide-react";
-import { getAllDistricts, getSchoolsInDistrict, getMeta, getPrices } from "@/lib/data";
+import { getDistricts, getSchoolData, getMeta, getPrices } from "@/lib/data";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { OfstedBadge } from "@/components/ofsted-badge";
 import { ProvenanceChip } from "@/components/provenance";
@@ -10,8 +10,8 @@ import { OFSTED_ORDER, districtLabel, ofstedLabel } from "@/lib/utils";
 import type { School } from "@/lib/utils";
 
 export async function generateStaticParams() {
-  const districts = await getAllDistricts();
-  return districts.map((d) => ({ district: d }));
+  const districts = await getDistricts();
+  return Object.keys(districts).map((d) => ({ district: d }));
 }
 
 export async function generateMetadata({ params }: { params: { district: string } }): Promise<Metadata> {
@@ -23,12 +23,15 @@ export async function generateMetadata({ params }: { params: { district: string 
 }
 
 export default async function AreaPage({ params }: { params: { district: string } }) {
-  const [schools, meta, allDistricts, prices] = await Promise.all([
-    getSchoolsInDistrict(params.district),
+  const [districts, meta, prices] = await Promise.all([
+    getDistricts(),
     getMeta(),
-    getAllDistricts(),
     getPrices(),
   ]);
+  const slugs = districts[params.district.toLowerCase()] ?? [];
+  const schools = (await Promise.all(slugs.map((slug) => getSchoolData(slug))))
+    .filter((d): d is NonNullable<typeof d> => Boolean(d))
+    .map((d) => d.school);
   if (schools.length === 0) notFound();
 
   const label = districtLabel(params.district);
@@ -109,7 +112,7 @@ export default async function AreaPage({ params }: { params: { district: string 
           <CardHeader>
             <CardTitle className="text-base">Sold house prices</CardTitle>
             <CardDescription>
-              {districtPrices.transactions} transactions near pilot schools · {districtPrices.period}
+              {districtPrices.transactions} transactions · {districtPrices.period}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
@@ -140,7 +143,7 @@ export default async function AreaPage({ params }: { params: { district: string 
       <div className="mt-6">
         <p className="mb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">Nearby districts</p>
         <div className="flex flex-wrap gap-1.5">
-          {allDistricts
+          {Object.keys(districts)
             .filter((d) => d !== params.district)
             .slice(0, 12)
             .map((d) => (

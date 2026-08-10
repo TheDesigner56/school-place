@@ -18,25 +18,63 @@ export async function getSchools(): Promise<School[]> {
   return readJson<School[]>("schools.json");
 }
 
+/**
+ * Merged per-school record — one small file per school (pre-split by
+ * data/pipeline/build_national_webdata.py). This is the ONLY read a school
+ * page needs; reading all 9 national layers per page would be ~56MB × 22k pages.
+ */
+export type FloodRisk = {
+  flood_zone3: boolean;
+  flood_zone2: boolean;
+  source_label?: string;
+  source_url?: string;
+};
+
+export type SchoolData = {
+  school: School;
+  ofsted: OfstedFull | null;
+  perf: SchoolPerf | null;
+  perf_history: PerfHistory | null;
+  chars: Characteristics | null;
+  admissions: SchoolAdmissions | null;
+  crime: LsoaCrime | null;
+  prices: DistrictPrices | null;
+  flood: FloodRisk | null;
+  data_as_of?: string | null;
+};
+
+export async function getSchoolData(slug: string): Promise<SchoolData | undefined> {
+  try {
+    return readJson<SchoolData>(`schools/${slug}.json`);
+  } catch {
+    return undefined;
+  }
+}
+
 export async function getSchoolBySlug(slug: string): Promise<School | undefined> {
-  const schools = await getSchools();
-  return schools.find((s) => s.slug === slug);
+  const data = await getSchoolData(slug);
+  return data?.school;
+}
+
+/** {district_lowercase: [slug, ...]} — pre-split district index for area pages. */
+export async function getDistricts(): Promise<Record<string, string[]>> {
+  return readJson<Record<string, string[]>>("districts.json");
 }
 
 export async function getSchoolsInDistrict(district: string): Promise<School[]> {
-  const schools = await getSchools();
-  const d = district.toLowerCase();
-  return schools.filter((s) => (s.postcode.trim().split(/\s+/)[0] ?? "").toLowerCase() === d);
+  const districts = await getDistricts();
+  const slugs = districts[district.toLowerCase()] ?? [];
+  const out: School[] = [];
+  for (const slug of slugs) {
+    const data = await getSchoolData(slug);
+    if (data) out.push(data.school);
+  }
+  return out;
 }
 
 export async function getAllDistricts(): Promise<string[]> {
-  const schools = await getSchools();
-  const set = new Set<string>();
-  for (const s of schools) {
-    const d = (s.postcode.trim().split(/\s+/)[0] ?? "").toLowerCase();
-    if (d) set.add(d);
-  }
-  return Array.from(set).sort();
+  const districts = await getDistricts();
+  return Object.keys(districts).sort();
 }
 
 export type Meta = {

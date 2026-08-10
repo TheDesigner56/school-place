@@ -9,9 +9,9 @@ import { districtLabel } from "@/lib/utils";
 import type { School } from "@/lib/utils";
 
 export const metadata: Metadata = {
-  title: "School league tables — Bath & Bristol",
+  title: "School league tables — England",
   description:
-    "Honest school league tables for Bath & North East Somerset and Bristol: primary schools ranked by Key Stage 2 results, secondary by GCSE Attainment 8 and Progress 8. Real DfE data, free.",
+    "Honest school league tables for England: primary schools ranked by Key Stage 2 results, secondary by GCSE Attainment 8 and Progress 8. Real DfE data, free.",
 };
 
 type Row = {
@@ -47,7 +47,7 @@ export default async function LeagueTablesPage() {
       </div>
       <h1 className="mt-1 font-serif text-4xl font-semibold tracking-tight">School league tables</h1>
       <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-        Bath &amp; North East Somerset and Bristol, ranked on published results. Exam data is one lens — it measures
+        England, ranked on published results. Exam data is one lens — it measures
         attainment, not teaching quality, and reflects intake as much as instruction. Read it alongside everything else.
       </p>
 
