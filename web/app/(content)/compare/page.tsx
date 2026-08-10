@@ -71,76 +71,83 @@ function CompareInner() {
     { label: "Admissions", render: (s) => s?.admissions_policy ?? "—" },
   ];
 
+  const slots = [
+    { key: "a" as const, school: a, clear: () => setASlug(null), pick: () => setPicking("a"), title: "School A" },
+    { key: "b" as const, school: b, clear: () => setBSlug(null), pick: () => setPicking("b"), title: "School B" },
+  ];
+
   return (
-    <div className="container max-w-5xl py-8">
-      <Link href="/" className="mb-6 inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
+    <div className="container max-w-5xl py-6 sm:py-10">
+      <Link href="/" className="press mb-6 inline-flex items-center gap-1.5 rounded-full border border-border/70 bg-card px-3.5 py-1.5 text-[13px] font-medium text-muted-foreground shadow-card hover:bg-accent hover:text-foreground sm:mb-8">
         <ArrowLeft className="h-3.5 w-3.5" /> Back to map
       </Link>
-      <h1 className="font-serif text-4xl font-semibold tracking-tight">Compare schools</h1>
-      <p className="mt-2 text-sm text-muted-foreground">Side-by-side metrics, honest and sourced.</p>
+
+      {/* ── Header ─────────────────────────────────────────── */}
+      <header className="border-b border-border/60 pb-8">
+        <p className="eyebrow">Side-by-side</p>
+        <h1 className="mt-2.5 font-serif text-[2.4rem] font-semibold leading-[1.06] tracking-tight sm:text-5xl">
+          Compare schools
+        </h1>
+        <p className="mt-3 max-w-lg text-sm leading-relaxed text-muted-foreground">
+          Side-by-side metrics, honest and sourced.
+        </p>
+      </header>
 
       {!loaded && <p className="mt-8 text-sm text-muted-foreground">Loading…</p>}
 
       {loaded && (
         <div className="mt-8 grid gap-4 md:grid-cols-2">
-          {/* Column A */}
-          <Card>
-            <CardHeader className="flex-row items-center justify-between">
-              <div>
-                <CardTitle className="text-base">School A</CardTitle>
-                <CardDescription>{a ? a.name : "Pick a school"}</CardDescription>
-              </div>
-              <div className="flex gap-1">
-                {a && (
-                  <button onClick={() => setASlug(null)} className="rounded-md p-1.5 text-muted-foreground hover:bg-accent" aria-label="Clear A">
-                    <X className="h-4 w-4" />
+          {slots.map((slot, i) => (
+            <Card key={slot.key} className="hover-lift animate-rise" style={{ animationDelay: `${i * 50}ms` }}>
+              <CardHeader className="flex-row items-center justify-between gap-3 space-y-0">
+                <div className="min-w-0">
+                  <p className="eyebrow text-[9.5px]">{slot.title}</p>
+                  <CardTitle className="mt-1.5 truncate text-base">
+                    {slot.school ? slot.school.name : "Pick a school"}
+                  </CardTitle>
+                  {!slot.school && (
+                    <CardDescription>No school selected yet</CardDescription>
+                  )}
+                </div>
+                <div className="flex shrink-0 items-center gap-1.5">
+                  {slot.school && (
+                    <button
+                      onClick={slot.clear}
+                      className="press inline-flex h-8 w-8 items-center justify-center rounded-full border border-border/70 bg-card text-muted-foreground shadow-card hover:bg-accent hover:text-foreground"
+                      aria-label={`Clear ${slot.title}`}
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </button>
+                  )}
+                  <button
+                    onClick={slot.pick}
+                    className="press inline-flex items-center gap-1.5 rounded-full border border-border/70 bg-card px-3.5 py-1.5 text-[13px] font-medium text-muted-foreground shadow-card hover:bg-accent hover:text-foreground"
+                  >
+                    <Search className="h-3.5 w-3.5" /> {slot.school ? "Change" : "Select"}
                   </button>
-                )}
-                <button onClick={() => setPicking("a")} className="inline-flex items-center gap-1 rounded-md border border-border px-2.5 py-1 text-xs hover:bg-accent">
-                  <Search className="h-3 w-3" /> {a ? "Change" : "Select"}
-                </button>
-              </div>
-            </CardHeader>
-            {a && (
-              <CardContent className="space-y-1.5 text-sm">
-                <p className="text-xs text-muted-foreground"><Link href={`/school/${a.slug}`} className="hover:underline">View full school page →</Link></p>
-              </CardContent>
-            )}
-          </Card>
-
-          {/* Column B */}
-          <Card>
-            <CardHeader className="flex-row items-center justify-between">
-              <div>
-                <CardTitle className="text-base">School B</CardTitle>
-                <CardDescription>{b ? b.name : "Pick a school"}</CardDescription>
-              </div>
-              <div className="flex gap-1">
-                {b && (
-                  <button onClick={() => setBSlug(null)} className="rounded-md p-1.5 text-muted-foreground hover:bg-accent" aria-label="Clear B">
-                    <X className="h-4 w-4" />
-                  </button>
-                )}
-                <button onClick={() => setPicking("b")} className="inline-flex items-center gap-1 rounded-md border border-border px-2.5 py-1 text-xs hover:bg-accent">
-                  <Search className="h-3 w-3" /> {b ? "Change" : "Select"}
-                </button>
-              </div>
-            </CardHeader>
-            {b && (
-              <CardContent className="space-y-1.5 text-sm">
-                <p className="text-xs text-muted-foreground"><Link href={`/school/${b.slug}`} className="hover:underline">View full school page →</Link></p>
-              </CardContent>
-            )}
-          </Card>
+                </div>
+              </CardHeader>
+              {slot.school && (
+                <CardContent>
+                  <Link
+                    href={`/school/${slot.school.slug}`}
+                    className="inline-flex items-center gap-1.5 text-[13px] font-medium text-primary underline-offset-4 hover:underline"
+                  >
+                    View full school page →
+                  </Link>
+                </CardContent>
+              )}
+            </Card>
+          ))}
         </div>
       )}
 
       {/* Picker overlay */}
       {picking && (
-        <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/40 p-4 pt-20" onClick={() => setPicking(null)}>
-          <div className="w-full max-w-md rounded-lg border border-border bg-card shadow-2xl" onClick={(e) => e.stopPropagation()}>
-            <div className="flex items-center gap-2 border-b border-border p-3">
-              <Search className="h-4 w-4 text-muted-foreground" />
+        <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/40 p-4 pt-20 backdrop-blur-sm animate-fade-in" onClick={() => setPicking(null)}>
+          <div className="glass w-full max-w-md overflow-hidden rounded-2xl animate-slide-up" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center gap-2 border-b border-border/50 p-3.5">
+              <Search className="h-4 w-4 shrink-0 text-muted-foreground" />
               <input
                 autoFocus
                 value={pickQuery}
@@ -148,24 +155,31 @@ function CompareInner() {
                 placeholder={`Search for school ${picking.toUpperCase()}…`}
                 className="h-9 w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground"
               />
-              <button onClick={() => setPicking(null)} className="rounded-md p-1 text-muted-foreground hover:bg-accent" aria-label="Close">
+              <button
+                onClick={() => setPicking(null)}
+                className="press inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-muted-foreground hover:bg-accent hover:text-foreground"
+                aria-label="Close"
+              >
                 <X className="h-4 w-4" />
               </button>
             </div>
-            <ul className="max-h-72 overflow-auto">
-              {pickResults.map((s) => (
-                <li key={s.urn}>
-                  <button onClick={() => choose(s.slug)} className="flex w-full items-center justify-between gap-3 px-3 py-2.5 text-left text-sm hover:bg-accent">
+            <ul className="max-h-72 divide-y divide-border/50 overflow-auto">
+              {pickResults.map((s, i) => (
+                <li key={s.urn} className="animate-rise" style={{ animationDelay: `${i * 40}ms` }}>
+                  <button
+                    onClick={() => choose(s.slug)}
+                    className="-mx-0 flex w-full items-center justify-between gap-3 px-3.5 py-3 text-left text-sm transition-colors hover:bg-accent/60"
+                  >
                     <span className="min-w-0">
                       <span className="block truncate font-medium">{s.name}</span>
-                      <span className="block text-xs text-muted-foreground">{s.phase} · {s.postcode}</span>
+                      <span className="mt-0.5 block font-mono text-[11px] text-muted-foreground">{s.phase} · {s.postcode}</span>
                     </span>
                     <OfstedBadge ofsted={s.ofsted} className="shrink-0" />
                   </button>
                 </li>
               ))}
               {pickQuery.trim().length >= 2 && pickResults.length === 0 && (
-                <li className="px-3 py-4 text-center text-sm text-muted-foreground">No matches</li>
+                <li className="px-4 py-6 text-center text-sm text-muted-foreground">No matches</li>
               )}
             </ul>
           </div>
@@ -174,33 +188,35 @@ function CompareInner() {
 
       {/* Comparison table */}
       {a && b && (
-        <div className="mt-8 overflow-hidden rounded-lg border border-border">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-border bg-muted/50">
-                <th className="w-32 p-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">Metric</th>
-                <th className="p-3 text-left font-medium">{a.name}</th>
-                <th className="p-3 text-left font-medium">{b.name}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((row, i) => (
-                <tr key={row.label} className={i % 2 ? "bg-muted/20" : ""}>
-                  <td className="p-3 text-xs text-muted-foreground">{row.label}</td>
-                  <td className="p-3">{row.render(a)}</td>
-                  <td className="p-3">{row.render(b)}</td>
+        <div className="mt-8 overflow-hidden rounded-2xl border border-border/70 bg-card shadow-card animate-slide-up">
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[540px] text-sm">
+              <thead>
+                <tr className="border-b border-border/50 bg-muted/40">
+                  <th className="w-32 p-3.5 text-left font-mono text-[10px] font-medium uppercase tracking-[0.12em] text-muted-foreground">Metric</th>
+                  <th className="p-3.5 text-left font-serif text-base font-semibold tracking-tight">{a.name}</th>
+                  <th className="p-3.5 text-left font-serif text-base font-semibold tracking-tight">{b.name}</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-border/40">
+                {rows.map((row) => (
+                  <tr key={row.label} className="transition-colors hover:bg-accent/50">
+                    <td className="p-3.5 font-mono text-[10px] font-medium uppercase tracking-[0.12em] text-muted-foreground">{row.label}</td>
+                    <td className="p-3.5">{row.render(a)}</td>
+                    <td className="p-3.5">{row.render(b)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 
       {a && b && (
-        <div className="mt-6 flex items-center justify-between">
+        <div className="mt-6 flex items-center justify-between gap-3">
           <button
             onClick={() => { const t = aSlug; setASlug(bSlug); setBSlug(t); }}
-            className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-xs hover:bg-accent"
+            className="press inline-flex items-center gap-1.5 rounded-full border border-border/70 bg-card px-3.5 py-1.5 text-[13px] font-medium text-muted-foreground shadow-card hover:bg-accent hover:text-foreground"
           >
             <ArrowRightLeft className="h-3.5 w-3.5" /> Swap
           </button>
@@ -213,7 +229,13 @@ function CompareInner() {
 
 export default function ComparePage() {
   return (
-    <Suspense fallback={<div className="container max-w-5xl py-8"><p className="text-sm text-muted-foreground">Loading…</p></div>}>
+    <Suspense
+      fallback={
+        <div className="container max-w-5xl py-8">
+          <p className="text-sm text-muted-foreground">Loading…</p>
+        </div>
+      }
+    >
       <CompareInner />
     </Suspense>
   );

@@ -63,8 +63,14 @@ const config: Config = {
       },
       borderRadius: {
         lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
+        md: "calc(var(--radius) - 3px)",
+        sm: "calc(var(--radius) - 6px)",
+      },
+      boxShadow: {
+        card: "var(--shadow-card)",
+        lift: "var(--shadow-lift)",
+        glass: "var(--shadow-glass)",
+        sheet: "var(--shadow-sheet)",
       },
       typography: { tabularNums: { fontVariantNumeric: "tabular-nums" } },
       keyframes: {
@@ -77,15 +83,15 @@ const config: Config = {
           to: { opacity: "0" },
         },
         "slide-up": {
-          from: { opacity: "0", transform: "translateY(8px)" },
-          to: { opacity: "1", transform: "translateY(0)" },
+          from: { opacity: "0", transform: "translateY(8px) scale(0.99)" },
+          to: { opacity: "1", transform: "translateY(0) scale(1)" },
         },
         /* Small rise for staggered list items — decorative, never blocking */
         rise: {
-          from: { opacity: "0", transform: "translateY(6px)" },
+          from: { opacity: "0", transform: "translateY(8px)" },
           to: { opacity: "1", transform: "translateY(0)" },
         },
-        /* iOS-style spring curve; opacity stays 1 so nothing "appears from nothing" */
+        /* iOS-style spring curve; opacity stays 1 so nothing appears from nothing */
         "sheet-up": {
           from: { transform: "translateY(100%)" },
           to: { transform: "translateY(0)" },
@@ -95,14 +101,20 @@ const config: Config = {
           from: { transform: "translateY(0)" },
           to: { transform: "translateY(100%)" },
         },
+        /* Icon crossfade for the theme toggle */
+        "spin-in": {
+          from: { opacity: "0", transform: "rotate(-40deg) scale(0.7)" },
+          to: { opacity: "1", transform: "rotate(0deg) scale(1)" },
+        },
       },
       animation: {
-        "fade-in": "fade-in 0.2s ease-out",
-        "fade-out": "fade-out 0.15s ease-in forwards",
-        "slide-up": "slide-up 0.25s ease-out",
-        rise: "rise 0.3s cubic-bezier(0.16, 1, 0.3, 1) both",
-        "sheet-up": "sheet-up 0.45s cubic-bezier(0.32, 0.72, 0, 1)",
-        "sheet-down": "sheet-down 0.22s ease-in forwards",
+        "fade-in": "fade-in 0.18s ease-out",
+        "fade-out": "fade-out 0.14s ease-in forwards",
+        "slide-up": "slide-up 0.22s cubic-bezier(0.16, 1, 0.3, 1)",
+        rise: "rise 0.35s cubic-bezier(0.16, 1, 0.3, 1) both",
+        "sheet-up": "sheet-up 0.44s cubic-bezier(0.32, 0.72, 0, 1)",
+        "sheet-down": "sheet-down 0.19s ease-in forwards",
+        "spin-in": "spin-in 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
       },
     },
   },

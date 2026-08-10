@@ -40,11 +40,11 @@ export function SchoolSheet({
   const [closing, setClosing] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Exit faster than enter (220ms out vs 450ms in), then unmount via parent.
+  // Exit faster than enter (190ms out vs 440ms in), then unmount via parent.
   const requestClose = () => {
     if (closing) return;
     setClosing(true);
-    timer.current = setTimeout(onClose, 210);
+    timer.current = setTimeout(onClose, 180);
   };
 
   useEffect(() => () => {
@@ -68,87 +68,73 @@ export function SchoolSheet({
       {/* Backdrop dim — tap anywhere outside to dismiss */}
       <div
         className={cn(
-          "fixed inset-0 z-30 bg-foreground/20",
+          "fixed inset-0 z-30 bg-foreground/25 backdrop-blur-[1px]",
           closing ? "animate-fade-out" : "animate-fade-in"
         )}
         onClick={requestClose}
         aria-hidden
       />
       <div
-        className="fixed inset-x-0 bottom-0 z-40 flex max-h-[62vh] flex-col sm:inset-x-auto sm:right-4 sm:bottom-4 sm:w-full sm:max-w-md"
+        className="fixed inset-x-0 bottom-0 z-40 flex max-h-[68vh] flex-col sm:inset-x-auto sm:bottom-5 sm:right-5 sm:w-full sm:max-w-md"
         role="dialog"
         aria-modal="true"
         aria-label={school.name}
       >
         <div
           className={cn(
-            "flex min-h-0 flex-col rounded-t-3xl border border-border bg-card/95 shadow-2xl backdrop-blur-xl sm:rounded-3xl",
+            "flex min-h-0 flex-col rounded-t-[28px] border border-b-0 border-border/70 bg-card/95 backdrop-blur-2xl shadow-sheet sm:rounded-[24px] sm:border-b",
             closing ? "animate-sheet-down" : "animate-sheet-up"
           )}
         >
           {/* Drag handle + close */}
-          <div className="relative flex justify-center px-4 pb-1 pt-2.5">
+          <div className="relative flex justify-center px-4 pb-0.5 pt-2.5">
             <button
               onClick={requestClose}
-              className="flex w-16 justify-center rounded-full py-1.5"
+              className="flex w-20 justify-center rounded-full py-2"
               aria-label="Close sheet"
             >
-              <span className="h-1.5 w-11 rounded-full bg-muted-foreground/25" />
+              <span className="h-[5px] w-10 rounded-full bg-muted-foreground/25" />
             </button>
             <button
               onClick={requestClose}
-              className="press absolute right-3 top-3 rounded-full bg-muted/70 p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground"
+              className="press absolute right-3.5 top-3.5 rounded-full bg-muted p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground"
               aria-label="Close"
             >
               <X className="h-4 w-4" />
             </button>
           </div>
 
-          <div className="space-y-3.5 overflow-y-auto px-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-1.5">
+          <div className="space-y-4 overflow-y-auto px-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-2 sm:px-6">
             {/* Header */}
             <div className="animate-rise" style={{ animationDelay: "40ms" }}>
-              <h2 className="font-serif text-[1.65rem] font-semibold leading-snug tracking-tight sm:text-3xl">
-                {school.name}
-              </h2>
-              <p className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted-foreground">
-                <span className="inline-flex items-center gap-1 rounded-full border border-border bg-card px-2 py-0.5 text-xs font-medium text-foreground/80">
+              <div className="flex flex-wrap items-center gap-2">
+                <OfstedBadge ofsted={grade} derivedSource={school.derived_ofsted_source} />
+                <span className="inline-flex items-center rounded-full border border-border/70 bg-card px-2.5 py-0.5 text-xs font-medium text-foreground/75">
                   {school.phase}
                 </span>
+              </div>
+              <h2 className="mt-2.5 font-serif text-[1.7rem] font-semibold leading-[1.12] tracking-tight">
+                {school.name}
+              </h2>
+              <p className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-muted-foreground">
                 <span className="inline-flex items-center gap-1">
                   <MapPin className="h-3 w-3" /> {school.postcode}
                 </span>
                 <span aria-hidden>·</span>
                 <span>{school.la}</span>
+                {school.ofsted_date && (
+                  <>
+                    <span aria-hidden>·</span>
+                    <span className="tabular-nums">Inspected {formatOfstedDate(school.ofsted_date)}</span>
+                  </>
+                )}
               </p>
             </div>
 
-            {/* Grade + quick stats */}
-            <div
-              className="flex flex-wrap items-center gap-2 animate-rise"
-              style={{ animationDelay: "90ms" }}
-            >
-              <OfstedBadge
-                ofsted={grade}
-                derivedSource={school.derived_ofsted_source}
-                className="px-3 py-1 text-sm"
-              />
-              {school.pupils != null && (
-                <span className="inline-flex items-center gap-1 rounded-full border border-border bg-card px-2.5 py-1 text-xs font-medium">
-                  <Users className="h-3 w-3 text-muted-foreground" />
-                  <span className="tabular-nums">{school.pupils.toLocaleString()}</span> pupils
-                </span>
-              )}
-              {school.ofsted_date && (
-                <span className="text-xs text-muted-foreground">
-                  Inspected {formatOfstedDate(school.ofsted_date)}
-                </span>
-              )}
-            </div>
-
-            {/* Stat chips (limited to schools.json fields) */}
+            {/* Stat strip */}
             <div
               className="grid grid-cols-3 gap-2 animate-rise"
-              style={{ animationDelay: "140ms" }}
+              style={{ animationDelay: "90ms" }}
             >
               <StatChip icon={School2} label="Phase" value={school.phase} />
               <StatChip
@@ -158,7 +144,7 @@ export function SchoolSheet({
               />
               <StatChip
                 icon={MapPin}
-                label="Local authority"
+                label="Authority"
                 value={school.la}
                 truncate
               />
@@ -166,8 +152,8 @@ export function SchoolSheet({
 
             {/* Catchment note — honest label, brand-tinted callout */}
             <p
-              className="flex items-start gap-2 rounded-xl border border-primary/20 bg-primary/5 px-3 py-2.5 text-xs leading-relaxed text-muted-foreground animate-rise"
-              style={{ animationDelay: "190ms" }}
+              className="flex items-start gap-2.5 rounded-2xl border border-primary/20 bg-primary/[0.06] px-3.5 py-3 text-xs leading-relaxed text-muted-foreground animate-rise"
+              style={{ animationDelay: "140ms" }}
             >
               <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
               <span>{reachLabel(school, reach)}</span>
@@ -177,10 +163,11 @@ export function SchoolSheet({
             <Link
               href={`/school/${school.slug}`}
               onClick={requestClose}
-              className="press flex h-12 items-center justify-center gap-1.5 rounded-full bg-primary text-sm font-semibold text-primary-foreground shadow-md shadow-primary/20 hover:bg-primary/90 animate-rise"
-              style={{ animationDelay: "240ms" }}
+              className="press group flex h-12 items-center justify-center gap-1.5 rounded-full bg-primary text-sm font-semibold text-primary-foreground shadow-card hover:bg-primary/90 animate-rise"
+              style={{ animationDelay: "190ms" }}
             >
-              View school <ArrowRight className="h-4 w-4" />
+              View school
+              <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
             </Link>
           </div>
         </div>
@@ -201,8 +188,8 @@ function StatChip({
   truncate?: boolean;
 }) {
   return (
-    <div className="flex flex-col justify-center rounded-xl border border-border bg-muted/40 px-3 py-2.5">
-      <span className="mb-0.5 inline-flex items-center gap-1 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+    <div className="flex flex-col justify-center rounded-2xl border border-border/60 bg-muted/40 px-3.5 py-2.5">
+      <span className="mb-0.5 inline-flex items-center gap-1 font-mono text-[9.5px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
         <Icon className="h-3 w-3" /> {label}
       </span>
       <span className={cn("text-sm font-semibold tabular-nums", truncate && "truncate")}>

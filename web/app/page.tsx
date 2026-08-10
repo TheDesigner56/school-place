@@ -1,4 +1,6 @@
 import { SchoolMap } from "@/components/school-map";
+import { BrandMark, BrandWordmark } from "@/components/brand";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { getSchools, getMeta, getAdmissions } from "@/lib/data";
 import Link from "next/link";
 
@@ -13,16 +15,23 @@ export default async function HomePage() {
   return (
     <main className="relative h-[100dvh] w-full overflow-hidden">
       <SchoolMap schools={schools} reach={reach} />
-      {/* Floating brand mark top-left (minimal, doesn't fight the map) */}
-      <div className="pointer-events-none absolute left-3 top-3 z-[5] sm:left-4">
-        <Link href="/" className="press pointer-events-auto inline-flex items-center gap-1.5 rounded-full border border-border/70 bg-card/85 px-3.5 py-1.5 text-sm font-semibold shadow-xl shadow-foreground/5 backdrop-blur-md">
-          <span className="text-primary">School</span><span className="text-foreground/70"> Place</span>
+      {/* Brand chip — top-left, only when the centred search column leaves room */}
+      <div className="pointer-events-none absolute left-4 top-4 z-[5] hidden xl:block">
+        <Link
+          href="/"
+          className="press glass pointer-events-auto inline-flex h-[52px] items-center gap-2.5 rounded-full pl-3 pr-4"
+        >
+          <BrandMark />
+          <BrandWordmark />
         </Link>
       </div>
-      {/* Meta strip — appears on wide screens, glass provenance */}
-      <div className="pointer-events-none absolute right-3 top-3 z-[5] hidden text-right sm:block sm:right-4">
-        <div className="pointer-events-auto rounded-full border border-border/70 bg-card/85 px-3.5 py-1.5 text-[11px] text-muted-foreground shadow-xl shadow-foreground/5 backdrop-blur-md tabular-nums">
-          <span className="font-semibold text-foreground">{meta.schools}</span> schools · {meta.region} · {meta.data_as_of}
+      {/* Meta strip + theme — top-right, glass provenance */}
+      <div className="pointer-events-none absolute right-3 top-3 z-[5] flex items-center gap-2 sm:right-4 sm:top-4">
+        <div className="glass pointer-events-auto hidden rounded-full px-3.5 py-1.5 text-[11px] text-muted-foreground tabular-nums xl:block">
+          <span className="font-semibold text-foreground">{meta.schools.toLocaleString()}</span> schools · {meta.region} · {meta.data_as_of}
+        </div>
+        <div className="pointer-events-auto">
+          <ThemeToggle />
         </div>
       </div>
     </main>

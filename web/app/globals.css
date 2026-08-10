@@ -4,96 +4,109 @@
 
 @layer base {
   :root {
-    /* Light theme — warm paper, deep teal accent, soft borders */
-    --background: 42 36% 97%;
-    --foreground: 215 28% 15%;
+    /* ── School Place · "Atlas" light ─────────────────────────────
+       Warm bone canvas, deep spruce primary, warm white cards.
+       Trust without corporate coldness: the green of a school field,
+       the paper of a well-thumbed prospectus. */
+    --background: 48 30% 96%;
+    --foreground: 192 32% 12%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 215 28% 15%;
+    --card: 46 40% 99%;
+    --card-foreground: 192 32% 12%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 215 28% 15%;
+    --popover: 46 40% 99%;
+    --popover-foreground: 192 32% 12%;
 
-    /* Deep teal — "trust" without corporate coldness; distinct from Ofsted green/blue */
-    --primary: 178 70% 26%;
-    --primary-foreground: 45 40% 98%;
+    /* Spruce — deeper and greener than generic teal; distinct from
+       Ofsted Outstanding (brighter, yellower) and Good (blue). */
+    --primary: 168 66% 23%;
+    --primary-foreground: 48 42% 97%;
 
-    --secondary: 42 18% 93%;
-    --secondary-foreground: 215 28% 15%;
+    --secondary: 46 26% 92%;
+    --secondary-foreground: 192 32% 12%;
 
-    --muted: 42 20% 94%;
-    --muted-foreground: 215 12% 42%;
+    --muted: 46 22% 93%;
+    --muted-foreground: 195 13% 40%;
 
-    /* Soft teal-tinted hover wash */
-    --accent: 174 28% 92%;
-    --accent-foreground: 215 28% 15%;
+    /* Hover wash — soft spruce tint */
+    --accent: 164 32% 90%;
+    --accent-foreground: 192 32% 12%;
 
     --destructive: 0 72% 45%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive-foreground: 48 42% 97%;
 
-    --border: 40 12% 87%;
-    --input: 40 12% 87%;
-    --ring: 178 70% 26%;
+    --border: 45 16% 85%;
+    --input: 45 16% 85%;
+    --ring: 168 66% 27%;
 
-    /* Ofsted grade colours — data-semantic, accessible in both themes */
+    /* Ofsted grade colours — data semantics, unchanged and accessible */
     --ofsted-outstanding: 152 56% 34%;   /* green */
     --ofsted-good: 212 80% 42%;          /* blue */
     --ofsted-requires: 38 92% 42%;       /* amber */
     --ofsted-inadequate: 0 72% 45%;      /* red */
     --ofsted-none: 220 8% 55%;           /* grey */
 
-    --radius: 0.75rem;
+    --radius: 0.875rem;
 
     --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
-    --font-serif: "Source Serif 4", ui-serif, Georgia, serif;
+    --font-serif: "Fraunces", ui-serif, Georgia, serif;
     --font-mono: "JetBrains Mono", ui-monospace, monospace;
 
-    /* Brand teal used for map washes / selection (kept in sync with --primary) */
-    --brand-map: 178 70% 32%;
+    /* Brand colour for map washes / selection rings (sync with --primary) */
+    --brand-map: 168 66% 30%;
 
-    --map-glass-bg: 42 36% 98% / 0.85;
+    /* Warm, layered shadows — light is filtered through paper, not slate */
+    --shadow-card: 0 1px 2px hsl(192 32% 12% / 0.04), 0 6px 16px -6px hsl(192 32% 12% / 0.07);
+    --shadow-lift: 0 2px 4px hsl(192 32% 12% / 0.05), 0 14px 28px -8px hsl(192 32% 12% / 0.12);
+    --shadow-glass: 0 1px 2px hsl(192 32% 12% / 0.06), 0 8px 28px -6px hsl(192 32% 12% / 0.14);
+    --shadow-sheet: 0 -1px 2px hsl(192 32% 12% / 0.04), 0 -16px 48px -12px hsl(192 32% 12% / 0.22);
   }
 
   .dark {
-    /* Dark theme — deep teal-ink, same token system, first-class */
-    --background: 210 24% 10%;
-    --foreground: 42 20% 94%;
+    /* ── School Place · "Night atlas" dark ────────────────────────
+       Deep spruce ink, luminous green accent. Designed, not inverted:
+       surfaces step up in lightness, shadows deepen instead of glow. */
+    --background: 178 18% 8%;
+    --foreground: 46 24% 92%;
 
-    --card: 210 20% 13%;
-    --card-foreground: 42 20% 94%;
+    --card: 176 15% 11.5%;
+    --card-foreground: 46 24% 92%;
 
-    --popover: 210 20% 13%;
-    --popover-foreground: 42 20% 94%;
+    --popover: 176 15% 11.5%;
+    --popover-foreground: 46 24% 92%;
 
-    --primary: 172 58% 56%;
-    --primary-foreground: 190 60% 10%;
+    --primary: 160 52% 48%;
+    --primary-foreground: 172 60% 8%;
 
-    --secondary: 210 16% 18%;
-    --secondary-foreground: 42 20% 94%;
+    --secondary: 176 12% 16%;
+    --secondary-foreground: 46 24% 92%;
 
-    --muted: 210 16% 16%;
-    --muted-foreground: 210 12% 64%;
+    --muted: 176 11% 15%;
+    --muted-foreground: 172 10% 62%;
 
-    --accent: 186 22% 18%;
-    --accent-foreground: 42 20% 94%;
+    --accent: 170 18% 17%;
+    --accent-foreground: 46 24% 92%;
 
-    --destructive: 0 62% 50%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive: 0 62% 52%;
+    --destructive-foreground: 48 42% 97%;
 
-    --border: 210 14% 22%;
-    --input: 210 14% 22%;
-    --ring: 172 58% 56%;
+    --border: 174 11% 20%;
+    --input: 174 11% 20%;
+    --ring: 160 52% 48%;
 
-    /* Ofsted grades stay semantically consistent, tuned for dark bg */
+    /* Ofsted grades — same semantics, tuned for dark surfaces */
     --ofsted-outstanding: 152 52% 48%;
     --ofsted-good: 212 85% 58%;
     --ofsted-requires: 38 90% 52%;
     --ofsted-inadequate: 0 68% 58%;
     --ofsted-none: 220 10% 60%;
 
-    --brand-map: 172 70% 60%;
+    --brand-map: 160 60% 56%;
 
-    --map-glass-bg: 210 20% 13% / 0.85;
+    --shadow-card: 0 1px 2px hsl(180 40% 4% / 0.5), 0 6px 16px -6px hsl(180 40% 4% / 0.5);
+    --shadow-lift: 0 2px 4px hsl(180 40% 4% / 0.5), 0 14px 28px -8px hsl(180 40% 4% / 0.6);
+    --shadow-glass: 0 1px 2px hsl(180 40% 4% / 0.6), 0 8px 28px -6px hsl(180 40% 4% / 0.6);
+    --shadow-sheet: 0 -1px 2px hsl(180 40% 4% / 0.5), 0 -16px 48px -12px hsl(180 40% 4% / 0.7);
   }
 }
 
@@ -101,44 +114,76 @@
   * {
     @apply border-border;
   }
+  html {
+    scroll-behavior: smooth;
+  }
   body {
     @apply bg-background text-foreground antialiased;
     font-feature-settings: "ss01", "cv11", "tnum";
+    text-rendering: optimizeLegibility;
+  }
+  /* Fraunces display — optical sizing on, gentle old-style softness */
+  .font-serif {
+    font-optical-sizing: auto;
   }
   /* Tabular numerals for all data figures by default */
   .tnum {
     font-variant-numeric: tabular-nums;
     font-feature-settings: "tnum";
   }
-  /* Links and buttons get a consistent, snappy focus ring */
+  ::selection {
+    background: hsl(var(--primary) / 0.18);
+  }
   :focus-visible {
     outline: none;
   }
 }
 
+@layer components {
+  /* Floating glass panel — the map chrome language. One recipe, everywhere. */
+  .glass {
+    @apply border border-border/60 bg-card/80 backdrop-blur-xl;
+    box-shadow: var(--shadow-glass);
+  }
+  /* Card surface */
+  .surface {
+    @apply border border-border/70 bg-card;
+    box-shadow: var(--shadow-card);
+  }
+  /* Section eyebrow — small caps label above titles */
+  .eyebrow {
+    @apply font-mono text-[11px] font-medium uppercase text-muted-foreground;
+    letter-spacing: 0.14em;
+  }
+}
+
 @layer utilities {
-  /* Emil checklist: buttons must feel responsive — press feedback, never on keyboard */
+  /* Emil checklist: pressables feel responsive — never on keyboard actions */
   .press {
-    transition: transform 150ms ease-out, background-color 150ms ease-out,
+    transition: transform 120ms ease-out, background-color 150ms ease-out,
       border-color 150ms ease-out, color 150ms ease-out, box-shadow 150ms ease-out;
   }
   .press:active {
-    transform: scale(0.97);
+    transform: scale(0.96);
   }
   /* Hover lift only where hover actually exists (no sticky-touch hover) */
   @media (hover: hover) and (pointer: fine) {
     .hover-lift {
-      transition: transform 150ms ease-out, box-shadow 150ms ease-out,
+      transition: transform 180ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 180ms ease-out,
         background-color 150ms ease-out, border-color 150ms ease-out;
     }
     .hover-lift:hover {
-      transform: translateY(-1px);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lift);
     }
   }
 }
 
 /* Respect reduced motion: kill entry/exit animation, keep state changes instant */
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
   *,
   *::before,
   *::after {
@@ -150,10 +195,14 @@
 
 /* MapLibre overrides — restrained, on-brand */
 .maplibregl-ctrl-attrib {
-  @apply text-[10px] opacity-70;
+  @apply text-[10px] opacity-60;
+}
+.maplibregl-ctrl-attrib.maplibregl-compact {
+  @apply rounded-full;
 }
 .maplibregl-popup-content {
-  @apply rounded-xl border border-border bg-card p-3 text-card-foreground shadow-lg;
+  @apply rounded-2xl border border-border bg-card p-3 text-card-foreground;
+  box-shadow: var(--shadow-lift);
   padding: 0.75rem 1rem !important;
 }
 .maplibregl-popup-tip {

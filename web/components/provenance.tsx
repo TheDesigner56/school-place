@@ -2,7 +2,8 @@ import { cn } from "@/lib/utils";
 
 /**
  * Glass-box provenance chip — source + date on every figure.
- * The signature "honest data" element: never let a number float without its origin.
+ * The signature "honest data" element: set in mono like a citation,
+ * never let a number float without its origin.
  */
 export function ProvenanceChip({
   children,
@@ -14,7 +15,7 @@ export function ProvenanceChip({
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1 rounded-full border border-border/60 bg-muted/70 px-2 py-0.5 text-[11px] font-normal text-muted-foreground tabular-nums",
+        "inline-flex items-center gap-1.5 rounded-md border border-border/60 bg-muted/60 px-1.5 py-0.5 font-mono text-[10px] leading-4 text-muted-foreground",
         className
       )}
     >
@@ -30,6 +31,8 @@ export function ProvenanceChip({
 /** Provenance line used in footer of cards / sections. */
 export function ProvenanceLine({ children }: { children: React.ReactNode }) {
   return (
-    <p className="mt-3 text-[11px] leading-relaxed text-muted-foreground">{children}</p>
+    <p className="mt-4 border-t border-border/50 pt-3 text-[11px] leading-relaxed text-muted-foreground">
+      {children}
+    </p>
   );
 }
