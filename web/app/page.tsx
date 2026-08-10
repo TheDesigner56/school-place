@@ -15,16 +15,14 @@ export default async function HomePage() {
       <SchoolMap schools={schools} reach={reach} />
       {/* Floating brand mark top-left (minimal, doesn't fight the map) */}
       <div className="pointer-events-none absolute left-3 top-3 z-[5] sm:left-4">
-        <Link href="/" className="pointer-events-auto inline-flex items-center gap-1.5 rounded-md bg-background/70 px-2 py-1 text-sm font-semibold backdrop-blur-md">
-          School<span className="text-muted-foreground"> Place</span>
+        <Link href="/" className="press pointer-events-auto inline-flex items-center gap-1.5 rounded-full border border-border/70 bg-card/85 px-3.5 py-1.5 text-sm font-semibold shadow-xl shadow-foreground/5 backdrop-blur-md">
+          <span className="text-primary">School</span><span className="text-foreground/70"> Place</span>
         </Link>
       </div>
       {/* Meta strip — appears on wide screens, glass provenance */}
       <div className="pointer-events-none absolute right-3 top-3 z-[5] hidden text-right sm:block sm:right-4">
-        <div className="pointer-events-auto rounded-md bg-background/70 px-2 py-1 text-[11px] text-muted-foreground backdrop-blur-md">
-          <span className="font-medium text-foreground">{meta.schools}</span> schools · {meta.region}
-          <br />
-          {meta.data_as_of}
+        <div className="pointer-events-auto rounded-full border border-border/70 bg-card/85 px-3.5 py-1.5 text-[11px] text-muted-foreground shadow-xl shadow-foreground/5 backdrop-blur-md tabular-nums">
+          <span className="font-semibold text-foreground">{meta.schools}</span> schools · {meta.region} · {meta.data_as_of}
         </div>
       </div>
     </main>

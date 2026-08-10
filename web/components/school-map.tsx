@@ -3,25 +3,25 @@
 import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import maplibregl from "maplibre-gl";
 import Fuse from "fuse.js";
-import Link from "next/link";
-import { Search, X, SlidersHorizontal, MapPin } from "lucide-react";
+import { Search, X, SlidersHorizontal, MapPin, HelpCircle } from "lucide-react";
 import type { School } from "@/lib/utils";
-import { ofstedHsl, ofstedLabel, PHASES, cn } from "@/lib/utils";
+import { effectiveOfsted, ofstedHsl, ofstedLabel, PHASES, cn } from "@/lib/utils";
+import { SchoolSheet } from "@/components/school-sheet";
 
 /**
  * Map-first home. MapLibre GL with OpenFreeMap tiles (no API key).
- * All 21,990 schools as colour-coded circle pins. Search (Fuse.js), phase filters.
+ * All ~22,000 schools as colour-coded circle pins. Search (Fuse.js), phase filters.
  * The map IS the home screen; search + filters float as glass panels over it.
+ * Tap a pin to open an AllTrails-style bottom sheet.
  */
 
-const OFSTED_CASE_MATCH = [
-  ["Outstanding", "hsl(152,56%,34%)"],
-  ["Good", "hsl(212,80%,42%)"],
-  ["Requires Improvement", "hsl(38,92%,42%)"],
-  ["Inadequate", "hsl(0,72%,45%)"],
-  ["Not judged", "hsl(220,8%,55%)"],
-  ["NULL", "hsl(220,8%,55%)"],
-] as const;
+const DEFAULT_REACH_METRES: Record<string, number> = {
+  Primary: 1600,
+  Secondary: 3000,
+  Nursery: 1600,
+  Special: 3000,
+  PRU: 3000,
+};
 
 export function SchoolMap({ schools, reach = {} }: { schools: School[]; reach?: Record<number, { min: number; max: number }> }) {
   const mapContainer = useRef<HTMLDivElement>(null);
@@ -30,6 +30,7 @@ export function SchoolMap({ schools, reach = {} }: { schools: School[]; reach?: 
   const [activePhases, setActivePhases] = useState<Set<string>>(new Set());
   const [selected, setSelected] = useState<School | null>(null);
   const [showFilters, setShowFilters] = useState(false);
+  const [showLegend, setShowLegend] = useState(false);
   const [searchResults, setSearchResults] = useState<School[]>([]);
   const [showResults, setShowResults] = useState(false);
   const [showReach, setShowReach] = useState(false);
@@ -63,8 +64,7 @@ export function SchoolMap({ schools, reach = {} }: { schools: School[]; reach?: 
     mapRef.current = map;
     map.on("load", () => {
       map.addSource("schools", { type: "geojson", data: { type: "FeatureCollection", features: [] } });
-      // Confidence-gradient: reach washes UNDER the pins.
-      // Three concentric bands — core (historically inside), mid, outer edge (volatile).
+      // Confidence-gradient: reach washes UNDER the pins (only meaningful where data exists).
       map.addSource("reach", { type: "geojson", data: { type: "FeatureCollection", features: [] } });
       const bands: Array<[string, number]> = [
         ["reach-core", 0.14],
@@ -78,7 +78,7 @@ export function SchoolMap({ schools, reach = {} }: { schools: School[]; reach?: 
           source: "reach",
           filter: ["==", ["get", "band"], id],
           paint: {
-            "fill-color": "hsl(245, 70%, 55%)",
+            "fill-color": "hsl(178, 70%, 32%)",
             "fill-opacity": opacity,
           },
           layout: { visibility: "none" },
@@ -89,11 +89,11 @@ export function SchoolMap({ schools, reach = {} }: { schools: School[]; reach?: 
         type: "line",
         source: "reach",
         filter: ["==", ["get", "band"], "reach-outer"],
-        paint: { "line-color": "hsl(245, 70%, 55%)", "line-opacity": 0.35, "line-width": 1.5, "line-dasharray": [2, 2] },
+        paint: { "line-color": "hsl(178, 70%, 32%)", "line-opacity": 0.4, "line-width": 1.5, "line-dasharray": [2, 2] },
         layout: { visibility: "none" },
       });
-      // Circle layer — colour by Ofsted grade via case expression
-      // Using explicit nested "case" for cleaner TS typing than match with spread.
+
+      // Circle layer — colour by effective Ofsted grade (derived first, official fallback).
       map.addLayer({
         id: "schools-circle",
         type: "circle",
@@ -101,12 +101,13 @@ export function SchoolMap({ schools, reach = {} }: { schools: School[]; reach?: 
         paint: {
           "circle-radius": ["interpolate", ["linear"], ["zoom"], 9, 4, 13, 7, 16, 12],
           "circle-color": [
-            "case",
-            ["==", ["get", "ofsted"], "Outstanding"], "hsl(152,56%,34%)",
-            ["==", ["get", "ofsted"], "Good"], "hsl(212,80%,42%)",
-            ["==", ["get", "ofsted"], "Requires Improvement"], "hsl(38,92%,42%)",
-            ["==", ["get", "ofsted"], "Inadequate"], "hsl(0,72%,45%)",
-            "hsl(220,8%,55%)",
+            "match",
+            ["get", "effective"],
+            "Outstanding", "hsl(152,56%,34%)",
+            "Good", "hsl(212,80%,42%)",
+            "Requires Improvement", "hsl(38,92%,42%)",
+            "Inadequate", "hsl(0,72%,45%)",
+            "hsl(220,8%,55%)"
           ],
           "circle-stroke-color": "#ffffff",
           "circle-stroke-width": 1.5,
@@ -133,6 +134,33 @@ export function SchoolMap({ schools, reach = {} }: { schools: School[]; reach?: 
           "text-halo-width": 1.5,
         },
       });
+
+      // Selected-school catchment guide circle (dashed line + soft fill so it reads at a glance).
+      map.addSource("selection-circle", { type: "geojson", data: { type: "FeatureCollection", features: [] } });
+      map.addLayer(
+        {
+          id: "selection-circle-fill",
+          type: "fill",
+          source: "selection-circle",
+          paint: {
+            "fill-color": "hsl(178, 70%, 32%)",
+            "fill-opacity": 0.07,
+          },
+        },
+        "schools-circle" // wash sits under the pins
+      );
+      map.addLayer({
+        id: "selection-circle-line",
+        type: "line",
+        source: "selection-circle",
+        paint: {
+          "line-color": "hsl(178, 70%, 30%)",
+          "line-width": 2.5,
+          "line-dasharray": [3, 2],
+          "line-opacity": 0.85,
+        },
+      });
+
       // Cursor + click → select
       map.on("mouseenter", "schools-circle", () => {
         map.getCanvas().style.cursor = "pointer";
@@ -144,7 +172,7 @@ export function SchoolMap({ schools, reach = {} }: { schools: School[]; reach?: 
         const f = e.features?.[0];
         if (!f) return;
         const s = schools.find((x) => x.urn === f.properties?.urn);
-        if (s) setSelected(s);
+        if (s) selectSchool(s);
       });
       updateSource();
     });
@@ -176,7 +204,7 @@ export function SchoolMap({ schools, reach = {} }: { schools: School[]; reach?: 
       properties: {
         urn: s.urn,
         name: s.name,
-        ofsted: s.ofsted ?? "Not judged",
+        effective: effectiveOfsted(s) ?? "Not judged",
       },
     }));
     (map.getSource("schools") as maplibregl.GeoJSONSource).setData({
@@ -189,17 +217,33 @@ export function SchoolMap({ schools, reach = {} }: { schools: School[]; reach?: 
     updateSource();
   }, [updateSource]);
 
-  // Approximate a circle polygon around [lng,lat] with radius r metres.
-  const circlePoly = (lng: number, lat: number, r: number, steps = 64) => {
-    const coords: Array<[number, number]> = [];
-    const dLat = r / 111320;
-    const dLng = r / (111320 * Math.cos((lat * Math.PI) / 180));
-    for (let i = 0; i <= steps; i++) {
-      const a = (i / steps) * 2 * Math.PI;
-      coords.push([lng + dLng * Math.cos(a), lat + dLat * Math.sin(a)]);
+  // Select a school: fly to it, open sheet, auto-enable reach washes when real data exists.
+  const selectSchool = useCallback((s: School) => {
+    const map = mapRef.current;
+    if (map) map.flyTo({ center: [s.lng, s.lat], zoom: 14, duration: 800 });
+    setSelected(s);
+    if (reach[s.urn]) {
+      setShowReach(true);
     }
-    return [coords];
-  };
+  }, [reach]);
+
+  // Update the dashed catchment circle when selection changes.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !map.getSource("selection-circle")) return;
+    if (!selected) {
+      (map.getSource("selection-circle") as maplibregl.GeoJSONSource).setData({ type: "FeatureCollection", features: [] });
+      return;
+    }
+    const r = reach[selected.urn];
+    const radius = r ? (r.min + r.max) / 2 : DEFAULT_REACH_METRES[selected.phase] ?? 1600;
+    const feature: GeoJSON.Feature = {
+      type: "Feature",
+      geometry: { type: "Polygon", coordinates: circlePoly(selected.lng, selected.lat, radius) },
+      properties: {},
+    };
+    (map.getSource("selection-circle") as maplibregl.GeoJSONSource).setData({ type: "FeatureCollection", features: [feature] });
+  }, [selected, reach]);
 
   // Toggle the confidence-gradient reach washes.
   useEffect(() => {
@@ -227,6 +271,18 @@ export function SchoolMap({ schools, reach = {} }: { schools: School[]; reach?: 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showReach, schools, reach]);
 
+  // Approximate a circle polygon around [lng,lat] with radius r metres.
+  const circlePoly = (lng: number, lat: number, r: number, steps = 64) => {
+    const coords: Array<[number, number]> = [];
+    const dLat = r / 111320;
+    const dLng = r / (111320 * Math.cos((lat * Math.PI) / 180));
+    for (let i = 0; i <= steps; i++) {
+      const a = (i / steps) * 2 * Math.PI;
+      coords.push([lng + dLng * Math.cos(a), lat + dLat * Math.sin(a)]);
+    }
+    return [coords];
+  };
+
   // Search box input handler
   const onSearch = useCallback(
     (val: string) => {
@@ -244,9 +300,7 @@ export function SchoolMap({ schools, reach = {} }: { schools: School[]; reach?: 
   );
 
   const flyToSchool = (s: School) => {
-    const map = mapRef.current;
-    if (map) map.flyTo({ center: [s.lng, s.lat], zoom: 14, duration: 800 });
-    setSelected(s);
+    selectSchool(s);
     setShowResults(false);
   };
 
@@ -259,6 +313,14 @@ export function SchoolMap({ schools, reach = {} }: { schools: School[]; reach?: 
     });
   };
 
+  const legendItems = [
+    ["Outstanding", "hsl(var(--ofsted-outstanding))"],
+    ["Good", "hsl(var(--ofsted-good))"],
+    ["Requires Improvement", "hsl(var(--ofsted-requires))"],
+    ["Inadequate", "hsl(var(--ofsted-inadequate))"],
+    ["Not judged / no data", "hsl(var(--ofsted-none))"],
+  ] as const;
+
   return (
     <div className="relative h-[100dvh] w-full overflow-hidden">
       <div ref={mapContainer} className="absolute inset-0" />
@@ -266,23 +328,23 @@ export function SchoolMap({ schools, reach = {} }: { schools: School[]; reach?: 
       {/* Top glass panel: search + filters */}
       <div className="pointer-events-none absolute inset-x-0 top-0 z-10 p-3 sm:p-4">
         <div className="pointer-events-auto mx-auto flex max-w-2xl flex-col gap-2">
-          {/* Search */}
+          {/* Search — floating glass pill */}
           <div className="relative">
-            <div className="flex items-center rounded-lg border border-border bg-card/85 shadow-lg backdrop-blur-md">
-              <Search className="ml-3 h-4 w-4 shrink-0 text-muted-foreground" />
+            <div className="flex items-center rounded-full border border-border/70 bg-card/85 shadow-xl shadow-foreground/5 backdrop-blur-md transition-shadow focus-within:shadow-2xl focus-within:ring-2 focus-within:ring-ring/30">
+              <Search className="ml-4 h-4 w-4 shrink-0 text-muted-foreground" />
               <input
                 value={query}
                 onChange={(e) => onSearch(e.target.value)}
                 onFocus={() => query.trim().length >= 2 && setShowResults(true)}
                 onBlur={() => setTimeout(() => setShowResults(false), 150)}
                 placeholder="Search 21,990 schools by name or postcode"
-                className="h-11 w-full bg-transparent px-2 text-sm outline-none placeholder:text-muted-foreground"
+                className="h-12 w-full bg-transparent px-2.5 text-sm outline-none placeholder:text-muted-foreground"
                 aria-label="Search schools"
               />
               {query && (
                 <button
                   onClick={() => { setQuery(""); setSearchResults([]); setShowResults(false); }}
-                  className="mr-2 text-muted-foreground hover:text-foreground"
+                  className="press mr-1 rounded-full p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground"
                   aria-label="Clear search"
                 >
                   <X className="h-4 w-4" />
@@ -291,16 +353,16 @@ export function SchoolMap({ schools, reach = {} }: { schools: School[]; reach?: 
               <button
                 onClick={() => setShowFilters((v) => !v)}
                 className={cn(
-                  "mr-1.5 flex h-8 items-center gap-1.5 rounded-md px-2.5 text-xs font-medium transition-colors",
+                  "press mr-1.5 flex h-9 shrink-0 items-center gap-1.5 rounded-full px-3.5 text-xs font-medium",
                   showFilters || activePhases.size > 0
-                    ? "bg-primary text-primary-foreground"
+                    ? "bg-primary text-primary-foreground shadow-sm"
                     : "text-muted-foreground hover:bg-accent"
                 )}
                 aria-label="Toggle filters"
                 aria-expanded={showFilters}
               >
                 <SlidersHorizontal className="h-3.5 w-3.5" />
-                <span className="hidden sm:inline">Filters</span>
+                Filters
                 {activePhases.size > 0 && (
                   <span className="rounded-full bg-primary-foreground/20 px-1.5 text-[10px] tabular-nums">
                     {activePhases.size}
@@ -310,43 +372,51 @@ export function SchoolMap({ schools, reach = {} }: { schools: School[]; reach?: 
             </div>
             {/* Search dropdown */}
             {showResults && searchResults.length > 0 && (
-              <ul className="absolute inset-x-0 top-12 z-20 overflow-hidden rounded-lg border border-border bg-card shadow-xl backdrop-blur-md animate-slide-up">
-                {searchResults.map((s) => (
-                  <li key={s.urn}>
-                    <button
-                      onMouseDown={(e) => { e.preventDefault(); flyToSchool(s); }}
-                      className="flex w-full items-center justify-between gap-3 px-3 py-2.5 text-left text-sm hover:bg-accent"
-                    >
-                      <span className="min-w-0">
-                        <span className="block truncate font-medium">{s.name}</span>
-                        <span className="block text-xs text-muted-foreground">{s.phase} · {s.postcode}</span>
-                      </span>
-                      <span
-                        className="h-2 w-2 shrink-0 rounded-full"
-                        style={{ backgroundColor: ofstedHsl(s.ofsted) }}
-                        title={ofstedLabel(s.ofsted)}
-                        aria-hidden
-                      />
-                    </button>
-                  </li>
-                ))}
+              <ul className="absolute inset-x-0 top-[3.5rem] z-20 overflow-hidden rounded-2xl border border-border bg-card/95 p-1 shadow-xl backdrop-blur-md animate-slide-up">
+                {searchResults.map((s, i) => {
+                  const grade = effectiveOfsted(s);
+                  return (
+                    <li key={s.urn} className="animate-rise" style={{ animationDelay: `${i * 40}ms` }}>
+                      <button
+                        onMouseDown={(e) => { e.preventDefault(); flyToSchool(s); }}
+                        className="flex w-full items-center justify-between gap-3 rounded-xl px-3 py-2.5 text-left text-sm hover:bg-accent"
+                      >
+                        <span className="min-w-0">
+                          <span className="block truncate font-medium">{s.name}</span>
+                          <span className="block text-xs text-muted-foreground">
+                            <span className="inline-flex items-center gap-1">
+                              <MapPin className="h-3 w-3" /> {s.postcode}
+                            </span>
+                            {" · "}{s.phase}
+                          </span>
+                        </span>
+                        <span
+                          className="h-2.5 w-2.5 shrink-0 rounded-full ring-2 ring-background"
+                          style={{ backgroundColor: ofstedHsl(grade) }}
+                          title={ofstedLabel(grade)}
+                          aria-hidden
+                        />
+                      </button>
+                    </li>
+                  );
+                })}
               </ul>
             )}
           </div>
 
           {/* Filter chips */}
           {showFilters && (
-            <div className="flex flex-wrap items-center gap-1.5 rounded-lg border border-border bg-card/85 p-2 shadow-lg backdrop-blur-md animate-slide-up">
+            <div className="flex flex-wrap items-center gap-1.5 rounded-2xl border border-border/70 bg-card/85 p-2.5 shadow-xl shadow-foreground/5 backdrop-blur-md animate-slide-up">
               <span className="px-1 text-xs text-muted-foreground">Phase:</span>
               {PHASES.map((p) => (
                 <button
                   key={p}
                   onClick={() => togglePhase(p)}
                   className={cn(
-                    "rounded-full border px-2.5 py-1 text-xs font-medium transition-colors",
+                    "press rounded-full border px-3 py-1 text-xs font-medium",
                     activePhases.has(p)
-                      ? "border-primary bg-primary text-primary-foreground"
-                      : "border-border text-muted-foreground hover:bg-accent"
+                      ? "border-primary bg-primary text-primary-foreground shadow-sm"
+                      : "border-border bg-card text-muted-foreground hover:bg-accent hover:text-foreground"
                   )}
                 >
                   {p}
@@ -355,7 +425,7 @@ export function SchoolMap({ schools, reach = {} }: { schools: School[]; reach?: 
               {activePhases.size > 0 && (
                 <button
                   onClick={() => setActivePhases(new Set())}
-                  className="ml-1 text-xs text-muted-foreground underline-offset-2 hover:underline"
+                  className="ml-1 text-xs text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
                 >
                   Clear
                 </button>
@@ -364,12 +434,12 @@ export function SchoolMap({ schools, reach = {} }: { schools: School[]; reach?: 
               <button
                 onClick={() => setShowReach((v) => !v)}
                 className={cn(
-                  "rounded-full border px-2.5 py-1 text-xs font-medium transition-colors",
+                  "press rounded-full border px-3 py-1 text-xs font-medium",
                   showReach
-                    ? "border-indigo-500 bg-indigo-500 text-white"
-                    : "border-indigo-300 text-indigo-600 hover:bg-indigo-50 dark:border-indigo-800 dark:text-indigo-400 dark:hover:bg-indigo-950"
+                    ? "border-primary bg-primary text-primary-foreground shadow-sm"
+                    : "border-primary/40 bg-card text-primary hover:bg-accent"
                 )}
-                title="Show published last-distance-offered as confidence washes (B&NES schools)"
+                title="Show published last-distance-offered as confidence washes (where data exists)"
               >
                 Reach
               </button>
@@ -378,76 +448,52 @@ export function SchoolMap({ schools, reach = {} }: { schools: School[]; reach?: 
         </div>
       </div>
 
-      {/* Legend — bottom-left glass panel */}
+      {/* Legend — compact info popover */}
       <div className="pointer-events-none absolute bottom-6 left-3 z-10 sm:left-4">
-        <div className="pointer-events-auto rounded-lg border border-border bg-card/85 p-2.5 shadow-lg backdrop-blur-md">
-          <p className="mb-1.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
-            Ofsted grade
-          </p>
-          <ul className="flex flex-col gap-1 text-xs">
-            {[
-              ["Outstanding", "hsl(var(--ofsted-outstanding))"],
-              ["Good", "hsl(var(--ofsted-good))"],
-              ["Requires Improvement", "hsl(var(--ofsted-requires))"],
-              ["Inadequate", "hsl(var(--ofsted-inadequate))"],
-              ["Not judged", "hsl(var(--ofsted-none))"],
-            ].map(([label, color]) => (
-              <li key={label} className="flex items-center gap-2">
-                <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: color }} />
-                <span className="text-foreground/80">{label}</span>
-              </li>
-            ))}
-          </ul>
+        <div className="pointer-events-auto">
+          <button
+            onClick={() => setShowLegend((v) => !v)}
+            className={cn(
+              "press flex h-10 w-10 items-center justify-center rounded-full border border-border/70 shadow-xl shadow-foreground/5 backdrop-blur-md",
+              showLegend ? "bg-primary text-primary-foreground" : "bg-card/85 text-muted-foreground hover:bg-accent hover:text-foreground"
+            )}
+            aria-label="Ofsted legend"
+            aria-expanded={showLegend}
+          >
+            <HelpCircle className="h-4 w-4" />
+          </button>
+          {showLegend && (
+            <div className="absolute bottom-12 left-0 w-60 rounded-2xl border border-border bg-card/95 p-3.5 shadow-xl backdrop-blur-md animate-slide-up">
+              <p className="mb-2.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                Ofsted grade
+              </p>
+              <ul className="flex flex-col gap-2 text-xs">
+                {legendItems.map(([label, color], i) => (
+                  <li key={label} className="flex items-center gap-2.5 animate-rise" style={{ animationDelay: `${i * 35}ms` }}>
+                    <span className="h-2.5 w-2.5 rounded-full ring-2 ring-background" style={{ backgroundColor: color }} />
+                    <span className="text-foreground/80">{label}</span>
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-2.5 border-t border-border pt-2 text-[10px] leading-relaxed text-muted-foreground">
+                Derived grades (post-2024) shown where no official headline exists.
+              </p>
+            </div>
+          )}
         </div>
       </div>
 
       {/* Result count — bottom-center */}
-      <div className="pointer-events-none absolute bottom-6 left-1/2 z-10 -translate-x-1/2 sm:left-1/2">
-        <div className="rounded-full border border-border bg-card/85 px-3 py-1 text-xs text-muted-foreground shadow-lg backdrop-blur-md tabular-nums">
-          {filtered.length} of {schools.length} schools
+      <div className="pointer-events-none absolute bottom-6 left-1/2 z-10 -translate-x-1/2">
+        <div className="rounded-full border border-border/70 bg-card/85 px-3.5 py-1.5 text-xs text-muted-foreground shadow-xl shadow-foreground/5 backdrop-blur-md tabular-nums">
+          <span className="font-semibold text-foreground">{filtered.length.toLocaleString()}</span>
+          {" "}of {schools.length.toLocaleString()} schools
         </div>
       </div>
 
-      {/* Selected school popover */}
+      {/* Selected school bottom sheet */}
       {selected && (
-        <div className="absolute inset-x-3 bottom-20 z-20 mx-auto max-w-sm sm:bottom-6 sm:left-6 sm:right-auto sm:mx-0">
-          <div className="overflow-hidden rounded-lg border border-border bg-card shadow-2xl backdrop-blur-md animate-slide-up">
-            <div className="flex items-start justify-between gap-2 border-b border-border p-3">
-              <div className="min-w-0">
-                <p className="truncate text-sm font-semibold leading-tight">{selected.name}</p>
-                <p className="mt-0.5 text-xs text-muted-foreground">
-                  {selected.phase} · {selected.postcode} · {selected.la}
-                </p>
-              </div>
-              <button
-                onClick={() => setSelected(null)}
-                className="shrink-0 rounded-md p-1 text-muted-foreground hover:bg-accent"
-                aria-label="Close"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-            <div className="flex items-center justify-between p-3">
-              <div className="flex items-center gap-2 text-xs">
-                <span
-                  className="h-2 w-2 rounded-full"
-                  style={{ backgroundColor: ofstedHsl(selected.ofsted) }}
-                  aria-hidden
-                />
-                <span>{ofstedLabel(selected.ofsted)}</span>
-                {selected.pupils != null && (
-                  <span className="text-muted-foreground">· {selected.pupils} pupils</span>
-                )}
-              </div>
-              <Link
-                href={`/school/${selected.slug}`}
-                className="inline-flex h-7 items-center rounded-md bg-primary px-2.5 text-xs font-medium text-primary-foreground hover:bg-primary/90"
-              >
-                View school →
-              </Link>
-            </div>
-          </div>
-        </div>
+        <SchoolSheet school={selected} onClose={() => setSelected(null)} reach={reach} />
       )}
     </div>
   );

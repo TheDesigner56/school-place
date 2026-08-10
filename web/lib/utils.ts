@@ -24,9 +24,12 @@ export type School = {
   ward: string | null;
   district: string | null;
   lsoa: string | null;
+  derived_ofsted: "Outstanding" | "Good" | "Requires Improvement" | "Inadequate" | null;
+  derived_ofsted_source: "official" | "categories" | "report_card" | null;
 };
 
-export type OfstedGrade = NonNullable<School["ofsted"]>;
+export type OfstedGrade = NonNullable<School["ofsted"] | School["derived_ofsted"]>;
+export type DerivedOfstedSource = NonNullable<School["derived_ofsted_source"]>;
 
 export const OFSTED_ORDER: OfstedGrade[] = [
   "Outstanding",
@@ -38,8 +41,28 @@ export const OFSTED_ORDER: OfstedGrade[] = [
 
 export const PHASES = ["Nursery", "Primary", "Secondary", "Special", "PRU"] as const;
 
+/** Effective grade used for colours, badges and search dots: derived first, official fallback. */
+export function effectiveOfsted(school: School): School["ofsted"] {
+  return school.derived_ofsted ?? school.ofsted;
+}
+
+export function isDerived(ofstedSource: School["derived_ofsted_source"]): boolean {
+  return ofstedSource != null && ofstedSource !== "official";
+}
+
+export function derivedTooltip(source: NonNullable<School["derived_ofsted_source"]>): string {
+  switch (source) {
+    case "categories":
+      return "Derived from inspection categories (Ofsted no longer issues a headline grade)";
+    case "report_card":
+      return "Derived from 2026 report-card judgements (Ofsted no longer issues a headline grade)";
+    default:
+      return "Official Ofsted grade";
+  }
+}
+
 /** Map Ofsted value → CSS var token name. "NULL" treated as Not judged. */
-export function ofstedToken(ofsted: School["ofsted"]): string {
+export function ofstedToken(ofsted: School["ofsted"] | School["derived_ofsted"]): string {
   const g = ofsted === "NULL" ? "Not judged" : ofsted ?? "Not judged";
   switch (g) {
     case "Outstanding": return "outstanding";
@@ -51,7 +74,7 @@ export function ofstedToken(ofsted: School["ofsted"]): string {
 }
 
 /** HSL string for map fill colours (no hsl() wrapper for MapLibre expression compatibility). */
-export function ofstedHsl(ofsted: School["ofsted"]): string {
+export function ofstedHsl(ofsted: School["ofsted"] | School["derived_ofsted"]): string {
   const g = ofsted === "NULL" ? "Not judged" : ofsted ?? "Not judged";
   switch (g) {
     case "Outstanding": return "hsl(152, 56%, 34%)";
@@ -62,9 +85,32 @@ export function ofstedHsl(ofsted: School["ofsted"]): string {
   }
 }
 
-export function ofstedLabel(ofsted: School["ofsted"]): string {
+export function ofstedLabel(ofsted: School["ofsted"] | School["derived_ofsted"]): string {
   if (ofsted === "NULL" || ofsted === null) return "Not judged";
   return ofsted;
+}
+
+/** 2026 report-card sub-judgement colours by their own grade names. */
+export function reportCardGradeColor(grade: string): string {
+  switch (grade.trim()) {
+    case "Exceptional": return "hsl(217, 91%, 45%)";      // blue
+    case "Strong standard": return "hsl(160, 60%, 28%)";  // dark green
+    case "Expected standard": return "hsl(145, 55%, 40%)"; // green
+    case "Needs attention": return "hsl(38, 92%, 42%)";   // amber
+    case "Urgent improvement": return "hsl(0, 72%, 45%)"; // red
+    default: return "hsl(220, 8%, 55%)";
+  }
+}
+
+export function reportCardGradeToken(grade: string): string {
+  switch (grade.trim()) {
+    case "Exceptional": return "exceptional";
+    case "Strong standard": return "strong";
+    case "Expected standard": return "expected";
+    case "Needs attention": return "needs-attention";
+    case "Urgent improvement": return "urgent";
+    default: return "none";
+  }
 }
 
 /** Postcode district: "BS2 0SU" → "bs2" */

@@ -14,7 +14,7 @@ export function ProvenanceChip({
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1 rounded-md bg-muted px-2 py-0.5 text-[11px] font-normal text-muted-foreground tabular-nums",
+        "inline-flex items-center gap-1 rounded-full border border-border/60 bg-muted/70 px-2 py-0.5 text-[11px] font-normal text-muted-foreground tabular-nums",
         className
       )}
     >

@@ -9,7 +9,7 @@ export function Header() {
         <Link href="/" className="flex items-center gap-2 font-semibold tracking-tight">
           <Compass className="h-5 w-5 text-primary" />
           <span className="text-[15px]">
-            School<span className="text-muted-foreground"> Place</span>
+            <span className="text-primary">School</span><span className="text-foreground/70"> Place</span>
           </span>
         </Link>
         <nav className="-mr-3 flex items-center gap-0.5 overflow-x-auto text-sm sm:gap-1">
