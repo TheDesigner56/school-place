@@ -1,0 +1,155 @@
+la_name,gss_code,school_count,status,source_format,source_url,notes
+la_name,la_code,schools,GREY,,,no research file
+Lancashire,E10000017,626,RED,none,,no public allocation data found
+Kent,E10000016,598,RED,none,,no public allocation data found
+Essex,E10000012,558,RED,none,,no public allocation data found
+Hertfordshire,E10000015,532,RED,none,,no public allocation data found
+Hampshire,E10000014,529,RED,none,,no public allocation data found
+Birmingham,E08000025,443,GREEN,PDF,https://www.birmingham.gov.uk/download/downloads/id/29455/secondary_offers_2024.pdf,"per-school cut-off distance in metres, offers by criteria, PAN"
+Norfolk,E10000020,421,RED,none,,no public allocation data found
+Derbyshire,E10000007,419,GREEN,HTML,https://apps.derbyshire.gov.uk/dotnet-applications/Admissions/asp/primaryschoolstable.asp,"live per-school table: applications, PAN, pupils (659KB)"
+Staffordshire,E10000029,408,RED,none,,no public allocation data found
+Surrey,E10000031,401,RED,none,,no public allocation data found
+Devon,E10000008,371,RED,none,,no public allocation data found
+Lincolnshire,E10000019,361,RED,none,,no public allocation data found
+North Yorkshire,E06000065,356,GREEN,XLSX,https://hub.datanorthyorkshire.org/dataset/school-admissions-2024-2025-yearly-statistics-primary-and-secondary,"XLSX per-school DfE number, PAN, applications, places allocated"
+Nottinghamshire,E10000024,342,RED,none,,no public allocation data found
+Suffolk,E10000030,321,RED,none,,no public allocation data found
+Oxfordshire,E10000025,309,RED,none,,no public allocation data found
+Gloucestershire,E10000013,301,RED,none,,no public allocation data found
+Leicestershire,E10000018,287,RED,none,,no public allocation data found
+West Sussex,E10000033,287,RED,none,,no public allocation data found
+Leeds,E08000035,279,RED,none,,no public allocation data found
+Cornwall,E06000052,279,AMBER,HTML,https://www.falmouthpacket.co.uk/news/24155106.schools-cornwall-places-secondary-schools-revealed/,candidate on non-official domain (news/aggregator) — verify
+Cambridgeshire,E10000004,268,RED,none,,no public allocation data found
+Somerset,E06000066,268,AMBER,HTML,https://www.aroundwellington.co.uk/somerset-primary-school-places-announced-2/,candidate on non-official domain (news/aggregator) — verify
+Durham,E06000047,261,AMBER,HTML,https://datasetsearch.research.google.com/,candidate on non-official domain (news/aggregator) — verify
+Warwickshire,E10000032,251,RED,none,,no public allocation data found
+Worcestershire,E10000035,244,RED,none,,no public allocation data found
+Buckinghamshire,E06000060,235,GREEN,HTML,https://www.buckinghamshire.gov.uk/schools-libraries-and-parks/school-admissions-and-appeals/guides-and-policies/school-place-allocation-statistics/,"admission, allocation, distance, offered, pan, statistic"
+Wiltshire,E06000054,234,GREEN,HTML,https://www.wiltshire.gov.uk/news/wiltshire-children-offered-places-at-primary-schools-on-national-offer-day,"offered, pan"
+Bradford,E08000032,209,RED,none,,no public allocation data found
+East Sussex,E10000011,189,RED,none,,no public allocation data found
+Manchester,E08000003,187,RED,none,,no public allocation data found
+West Northamptonshire,E06000062,186,AMBER,HTML,https://www.northamptonchron.co.uk/education/secondary-school-offer-day-number-of-students-offered-first-choice-in-west-northamptonshire-increases-5014513,candidate on non-official domain (news/aggregator) — verify
+Kirklees,E08000034,182,AMBER,HTML,https://www.gov.uk/government/collections/statistics-school-and-pupil-numbers,candidate on non-official domain (news/aggregator) — verify
+Sheffield,E08000019,179,RED,none,,no public allocation data found
+Cumberland,E06000063,172,RED,none,,no public allocation data found
+Liverpool,E08000012,170,RED,none,,no public allocation data found
+Northumberland,E06000057,168,GREEN,HTML,https://www.northumberland.gov.uk/education-skills/schools/school-admissions-places-appeals/school-catchment-and-transport,"admission, distance, offered, pan"
+Cheshire West and Chester,E06000050,160,GREEN,HTML,https://www.cheshirewestandchester.gov.uk/residents/education-and-learning/school-admissions/secondary-admissions,"admission, allocation, distance, intake, offered, oversubscri"
+Dorset,E06000059,158,RED,none,,no public allocation data found
+Cheshire East,E06000049,156,RED,none,,no public allocation data found
+Bristol,E06000023,155,RED,none,,no public allocation data found
+Shropshire,E06000051,151,GREEN,HTML,https://newsroom.shropshire.gov.uk/2024/04/children-offered-place-preferred-primary-school/,"admission, offered, pan"
+East Riding of Yorkshire,E06000011,149,RED,none,,no public allocation data found
+Westmorland and Furness,E06000064,147,AMBER,HTML,https://datasetsearch.research.google.com/,candidate on non-official domain (news/aggregator) — verify
+North Northamptonshire,E06000061,144,RED,none,,no public allocation data found
+Wakefield,E08000036,141,RED,none,,no public allocation data found
+Barnet,E09000003,131,RED,none,,no public allocation data found
+Central Bedfordshire,E06000056,130,GREEN,HTML,https://www.centralbedfordshire.gov.uk/schools-and-education/school-admissions/apply-secondary-school-place/secondary-school-places-offered-2026,"admission, allocation, offered, pan"
+Bolton,E08000001,129,RED,none,,no public allocation data found
+Doncaster,E08000017,128,RED,none,,no public allocation data found
+Wigan,E08000010,127,RED,none,,no public allocation data found
+Croydon,E09000008,126,RED,none,,no public allocation data found
+Wirral,E08000015,125,AMBER,HTML,https://datasetsearch.research.google.com/search,candidate on non-official domain (news/aggregator) — verify
+Sandwell,E08000028,124,RED,none,,no public allocation data found
+Rotherham,E08000018,123,RED,none,,no public allocation data found
+Walsall,E08000030,122,GREEN,HTML,https://go.walsall.gov.uk/newsroom/record-breaking-99-children-walsall-offered-place-one-their-preferred-primary-schools,"admission, allocation, offered, pan"
+Coventry,E08000026,118,RED,none,,no public allocation data found
+Stockport,E08000007,117,RED,none,,no public allocation data found
+Sunderland,E08000024,116,GREEN,HTML,https://www.sunderland.gov.uk/school-allocations,"allocation, pan"
+South Gloucestershire,E06000025,116,RED,none,,no public allocation data found
+Milton Keynes,E06000042,115,RED,none,,no public allocation data found
+Leicester,E06000016,113,RED,none,,no public allocation data found
+Wolverhampton,E08000031,111,RED,none,,no public allocation data found
+Dudley,E08000027,107,RED,none,,no public allocation data found
+Oldham,E08000004,107,RED,none,,no public allocation data found
+Derby,E06000015,107,RED,none,,no public allocation data found
+Nottingham,E06000018,106,RED,none,,no public allocation data found
+Southwark,E09000028,103,RED,none,,no public allocation data found
+Sefton,E08000014,103,RED,none,,no public allocation data found
+Medway,E06000035,103,RED,none,,no public allocation data found
+Newham,E09000025,102,RED,none,,no public allocation data found
+"Bournemouth, Christchurch & Poole",E06000058,101,GREY,,,no research file
+Bromley,E09000006,100,RED,none,,no public allocation data found
+Salford,E08000006,100,RED,none,,no public allocation data found
+Calderdale,E08000033,100,RED,none,,no public allocation data found
+Newcastle upon Tyne,E08000021,100,RED,none,,no public allocation data found
+Hillingdon,E09000017,99,RED,none,,no public allocation data found
+Herefordshire,E06000019,99,RED,none,,no public allocation data found
+Tameside,E08000008,98,GREEN,PDF,https://www.tameside.gov.uk/education/organisation-and-admissions/school-places-allocation-information,"allocation PDFs 2010-2026, primary+secondary, distance column"
+Plymouth,E06000026,98,GREEN,HTML,https://www.plymouth.gov.uk/accept-school-place-we-have-offered-you,"admission, allocation, offered, pan"
+Kingston upon Hull,E06000010,98,RED,none,,no public allocation data found
+Enfield,E09000010,97,RED,none,,no public allocation data found
+Ealing,E09000009,94,RED,none,,no public allocation data found
+Tower Hamlets,E09000030,93,RED,none,,no public allocation data found
+Stoke-on-Trent,E06000021,93,GREY,,,no research file
+Trafford,E08000009,91,GREEN,PDF,https://www.trafford.gov.uk/schools-and-learning/starting-school-and-admissions/admission-outcomes-and-arrangements,"per-year outcome pages 2022-2026, per-school PAN/offers/cut-off miles"
+Barnsley,E08000016,91,RED,none,,no public allocation data found
+Brent,E09000005,89,AMBER,HTML,https://datasetsearch.research.google.com/,candidate on non-official domain (news/aggregator) — verify
+Rochdale,E08000005,89,RED,none,,no public allocation data found
+Greenwich,E09000011,88,RED,none,,no public allocation data found
+Lambeth,E09000022,88,AMBER,HTML,https://parliamentnews.co.uk/lambeth-secondary-schools-every-child-is-offered-a-place/,candidate on non-official domain (news/aggregator) — verify
+Warrington,E06000007,88,RED,none,,no public allocation data found
+Swindon,E06000030,88,AMBER,HTML,https://explore-education-statistics.service.gov.uk/find-statistics/school-pupils-and-their-characteristics/2024-25,candidate on non-official domain (news/aggregator) — verify
+Lewisham,E09000023,86,RED,none,,no public allocation data found
+Haringey,E09000014,85,RED,none,,no public allocation data found
+Bexley,E09000004,84,GREEN,PDF,https://ams3.digitaloceanspaces.com/townley.debeerdigital/wp-content/uploads/2025/04/29084423/Admissions-Policy-2024-25.pdf,"admission, allocation, distance, intake, offered, oversubscri"
+Bury,E08000002,84,RED,none,,no public allocation data found
+Gateshead,E08000037,84,RED,none,,no public allocation data found
+Wandsworth,E09000032,83,RED,none,,no public allocation data found
+Solihull,E08000029,83,GREEN,PDF,https://www.solihull.gov.uk/sites/default/files/2026-02/How-secondary-places-were-offered-24-25-26.pdf,per-school secondary allocation
+West Berkshire,E06000037,83,RED,none,,no public allocation data found
+Havering,E09000016,82,GREEN,HTML,https://www.havering.gov.uk/school-admissions-1/school-admissions-arrangements-statistics,"admission, pan, statistic"
+Peterborough,E06000031,82,RED,none,,no public allocation data found
+Bath and North East Somerset,E06000022,81,RED,none,,no public allocation data found
+North Somerset,E06000024,80,RED,none,,no public allocation data found
+North Lincolnshire,E06000013,80,RED,none,,no public allocation data found
+Redbridge,E09000026,79,AMBER,HTML,https://datasetsearch.research.google.com/,candidate on non-official domain (news/aggregator) — verify
+North Tyneside,E08000022,79,RED,none,,no public allocation data found
+Waltham Forest,E09000031,78,RED,none,,no public allocation data found
+Stockton-on-Tees,E06000004,78,GREY,,,no research file
+Hackney,E09000012,77,GREEN,PDF,https://education.hackney.gov.uk/sites/default/files/document/Hackney%20New%20Primary%202024-25%20Determined.pdf,"admission, allocation, distance, offered, oversubscri, pan"
+Hounslow,E09000018,77,RED,none,,no public allocation data found
+Blackburn with Darwen,E06000008,77,AMBER,HTML,https://www.gov.uk/government/collections/statistics-school-applications,candidate on non-official domain (news/aggregator) — verify
+Telford and Wrekin,E06000020,76,AMBER,HTML,https://newsroom.telford.gov.uk/news/places-confirmed-for-school-starters,candidate on non-official domain (news/aggregator) — verify
+Bedford,E06000055,76,RED,none,,no public allocation data found
+Southampton,E06000045,76,AMBER,HTML,https://www.dailyecho.co.uk/news/25099870.primary-school-offers-revealed-council-southampton/,candidate on non-official domain (news/aggregator) — verify
+Wokingham,E06000041,72,RED,none,,no public allocation data found
+St Helens,E08000013,70,RED,none,,no public allocation data found
+Luton,E06000032,70,AMBER,HTML,https://www.lutontoday.co.uk/education/school-offers-how-many-children-offered-place-first-choice-2025-data-5174977,candidate on non-official domain (news/aggregator) — verify
+Windsor and Maidenhead,E06000040,66,RED,none,,no public allocation data found
+Halton,E06000006,66,RED,none,,no public allocation data found
+Islington,E09000019,65,AMBER,HTML,https://datasetsearch.research.google.com/,candidate on non-official domain (news/aggregator) — verify
+Brighton and Hove,E06000043,65,AMBER,HTML,https://explore-education-statistics.service.gov.uk/find-statistics/school-pupils-and-their-characteristics/2024-25,candidate on non-official domain (news/aggregator) — verify
+Sutton,E09000029,63,RED,none,,no public allocation data found
+North East Lincolnshire,E06000012,63,RED,none,,no public allocation data found
+York,E06000014,63,GREEN,CSV,https://data.gov.uk/dataset/admissions-summary-all-secondary,structured CSV 2016-2025 (only known structured-CSV publisher)
+South Tyneside,E08000023,62,RED,none,,no public allocation data found
+Barking and Dagenham,E09000002,61,RED,none,,no public allocation data found
+Knowsley,E08000011,61,RED,none,,no public allocation data found
+Reading,E06000038,61,GREEN,PDF,https://www.brighterfuturesforchildren.org/wp-content/uploads/2025/03/Secondary-Places-2025-Table.pdf,per-school secondary places table
+Portsmouth,E06000044,61,RED,none,,no public allocation data found
+Harrow,E09000015,60,RED,none,,no public allocation data found
+Richmond upon Thames,E09000027,60,GREEN,HTML,https://www.whatdotheyknow.com/request/richmond_school_admissions_cut_o_5,"admission, pan"
+Hammersmith and Fulham,E09000013,59,GREEN,PDF,https://www.lbhf.gov.uk/sites/default/files/2024-03/secondary-school-allocations-places-2024.pdf,per-school secondary allocation
+Redcar and Cleveland,E06000003,59,RED,none,,no public allocation data found
+Camden,E09000007,57,AMBER,HTML,https://datasetsearch.research.google.com/,candidate on non-official domain (news/aggregator) — verify
+Middlesbrough,E06000002,57,RED,none,,no public allocation data found
+Merton,E09000024,56,GREEN,PDF,https://www.merton.gov.uk/sites/default/files/2025-09/Admissions%20and%20appeals%20data%20for%20recent%20years%20-%20table%20Sept%2025.pdf,"admission, allocation, distance, offered, pan"
+Thurrock,E06000034,56,RED,none,,no public allocation data found
+Westminster,E09000033,55,GREEN,PDF,https://www.westminster.gov.uk/sites/default/files/media/documents/how-places-were-offered-at-bi-borough-secondary-schools-2-march-2026.pdf,"per-school allocation, bi-borough"
+Kingston upon Thames,E09000021,52,AMBER,HTML,https://www.chessington.kingston.sch.uk/about-us/admissions/how-places-were-offered,candidate on non-official domain (news/aggregator) — verify
+Southend on Sea,E06000033,52,RED,none,,no public allocation data found
+Slough,E06000039,51,RED,none,,no public allocation data found
+Isle of Wight,E06000046,48,RED,none,,no public allocation data found
+Torbay,E06000027,43,RED,none,,no public allocation data found
+Blackpool,E06000009,43,RED,none,,no public allocation data found
+Darlington,E06000005,42,RED,none,,no public allocation data found
+Kensington and Chelsea,E09000020,40,GREEN,PDF,https://www.westminster.gov.uk/sites/default/files/media/documents/how-places-were-offered-at-bi-borough-secondary-schools-2-march-2026.pdf,"per-school allocation, bi-borough (shared with Westminster)"
+Hartlepool,E06000001,39,RED,none,,no public allocation data found
+Bracknell Forest,E06000036,37,RED,none,,no public allocation data found
+Rutland,E06000017,20,RED,none,,no public allocation data found
+City of London,E09000001,1,RED,none,,no public allocation data found
+Isles of Scilly,E06000053,1,AMBER,HTML,https://datasetsearch.research.google.com/,candidate on non-official domain (news/aggregator) — verify
