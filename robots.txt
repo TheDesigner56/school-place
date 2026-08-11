@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://thedesigner56.github.io/school-place/sitemap.xml
